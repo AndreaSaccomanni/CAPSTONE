@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PrenotazioneDTO {
-    private Long id;
+
     private Long utenteId;
     private Long servizioId;
     private LocalDateTime dataOraPrenotazione;

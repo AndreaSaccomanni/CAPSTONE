@@ -19,9 +19,8 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Long
     // Trova tutte le prenotazioni in un intervallo di tempo
     List<Prenotazione> findByDataOraBetween( LocalDateTime start, LocalDateTime end);
 
-    //Per verificare se un determinato servizio è già prenotato in un momento specifico
-    @Query("SELECT p FROM Prenotazione p WHERE p.servizio = :servizio AND p.dataOra = :dataOra")
-    List<Prenotazione> findByServizioAndDataOra(@Param("servizio") Servizio servizio, @Param("dataOra") LocalDateTime dataOra);
-
     boolean existsByDataOra(LocalDateTime dataOra);
+
+
+
 }

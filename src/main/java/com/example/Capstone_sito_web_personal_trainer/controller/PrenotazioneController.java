@@ -16,35 +16,42 @@ public class PrenotazioneController {
     @Autowired
     PrenotazioneService prenotazioneService;
 
-
+    //nuova prenotazione
     @PostMapping("/new")
-    public ResponseEntity<?> creaPrenotazione(@RequestBody PrenotazioneDTO prenotazioneDTO){
-        try {
-            PrenotazioneDTO dto = prenotazioneService.creaPrenotazione(prenotazioneDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(dto);
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+    public ResponseEntity<?> creaPrenotazione(@RequestBody PrenotazioneDTO prenotazioneDTO) {
+        PrenotazioneDTO dto = prenotazioneService.creaPrenotazione(prenotazioneDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    //tutte le prenotazioni
     @GetMapping
-    public ResponseEntity<List<PrenotazioneDTO>> getAllPrenotazioni(){
+    public ResponseEntity<List<PrenotazioneDTO>> getAllPrenotazioni() {
         List<PrenotazioneDTO> prenotazioni = prenotazioneService.getAllPrenotazioni();
         return ResponseEntity.ok(prenotazioni);
     }
 
+    //prenotazione per ID
     @GetMapping("/{id}")
-    public ResponseEntity<PrenotazioneDTO> getPrenotazionneById(@PathVariable Long id){
+    public ResponseEntity<PrenotazioneDTO> getPrenotazioneById(@PathVariable Long id) {
         PrenotazioneDTO dto = prenotazioneService.getPrenotazioneById(id);
         return ResponseEntity.ok(dto);
     }
 
+    // tutte le prenotazioni di un cliente
+    @GetMapping("/utente/{utenteId}")
+    public ResponseEntity<List<PrenotazioneDTO>> getPrenotazioniByUtente(@PathVariable Long utenteId) {
+        List<PrenotazioneDTO> prenotazioni = prenotazioneService.getPrenotazioniByUtente(utenteId);
+        return ResponseEntity.ok(prenotazioni);
+    }
+
+    // Cancella una prenotazione
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancellaPrenotazione(@PathVariable Long id) {
         prenotazioneService.cancellaPrenotazione(id);
         return ResponseEntity.noContent().build();
     }
 
+    // Modifica una prenotazione
     @PutMapping("/{id}")
     public ResponseEntity<PrenotazioneDTO> modificaPrenotazione(@PathVariable Long id, @RequestBody PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneDTO dto = prenotazioneService.modificaPrenotazione(id, prenotazioneDTO);
