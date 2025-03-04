@@ -44,21 +44,20 @@ public class PrenotazioneService {
         LocalDateTime start = prenotazioneDTO.getDataOraPrenotazione();
         LocalDateTime end = start.plusMinutes(durataServizio); // Calcola l'orario di fine
 
-        // Controlla se ci sono sovrapposizioni con altre prenotazioni
+        // Controllo per vedere se ci sono sovrapposizioni con altre prenotazioni
         if (isSovrapposizione(start, end)) {
             throw new IllegalArgumentException("Impossibile creare una prenotazione per l'ora e la data selezionata⚠️");
         }
 
-        // Crea la nuova prenotazione
+        // Creo la nuova prenotazione
         Prenotazione prenotazione = prenotazioneMapperDTO.toEntity(prenotazioneDTO);
         prenotazione.setUtente(utente);
         prenotazione.setServizio(servizio);
         prenotazione.setDataOra(start);
 
-        // Salva la prenotazione nel repository
+        // Salvo la prenotazione
         prenotazione = prenotazioneRepository.save(prenotazione);
 
-        // Restituisce la prenotazione come DTO
         return prenotazioneMapperDTO.toDto(prenotazione);
     }
 
@@ -81,10 +80,10 @@ public class PrenotazioneService {
     }
 
     public PrenotazioneDTO modificaPrenotazione(Long id, PrenotazioneDTO prenotazioneDTO) {
+        //Recupero la prenotazione nel db
         Prenotazione prenotazione = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Prenotazione non trovata!⚠️"));
 
-        // Verifica se la data e ora della nuova prenotazione sono disponibili
         if (prenotazioneDTO.getDataOraPrenotazione() != null) {
             // Recupera il servizio scelto e la durata
             Servizio servizio = servizioRepository.findById(prenotazioneDTO.getServizioId())
@@ -94,7 +93,7 @@ public class PrenotazioneService {
             LocalDateTime start = prenotazioneDTO.getDataOraPrenotazione();
             LocalDateTime end = start.plusMinutes(durataServizio); // Calcola l'orario di fine
 
-            // Controlla se ci sono sovrapposizioni con altre prenotazioni
+            // Controllo per vedere se ci sono sovrapposizioni con altre prenotazioni
             if (isSovrapposizione(start, end)) {
                 throw new IllegalArgumentException("La prenotazione si sovrappone con una già esistente.");
             }
@@ -112,7 +111,7 @@ public class PrenotazioneService {
         // Se viene fornito un nuovo utente, aggiorna
         if (prenotazioneDTO.getUtenteId() != null) {
             Utente utente = utenteRepository.findById(prenotazioneDTO.getUtenteId())
-                    .orElseThrow(() -> new EntityNotFoundException("Utente non trovato!"));
+                    .orElseThrow(() -> new EntityNotFoundException("Utente non trovato!⚠️"));
             prenotazione.setUtente(utente);
         }
 
@@ -121,7 +120,7 @@ public class PrenotazioneService {
             prenotazione.setNote(prenotazioneDTO.getNote());
         }
 
-        // Salva la prenotazione aggiornata
+        // Salvo la prenotazione aggiornata
         prenotazione = prenotazioneRepository.save(prenotazione);
         return prenotazioneMapperDTO.toDto(prenotazione);
     }
