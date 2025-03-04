@@ -84,10 +84,12 @@ public class PrenotazioneService {
         Prenotazione prenotazione = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Prenotazione non trovata!⚠️"));
 
+        // PER MODIFICARE LA DATA DI UNA PRENOTAZIONE BISOGNA INSERIRE ANCHE L'ID DEL SERVIZIO
         if (prenotazioneDTO.getDataOraPrenotazione() != null) {
             // Recupera il servizio scelto e la durata
             Servizio servizio = servizioRepository.findById(prenotazioneDTO.getServizioId())
                     .orElseThrow(() -> new EntityNotFoundException("Servizio non trovato!⚠️"));
+            prenotazione.setServizio(servizio);
 
             int durataServizio = servizio.getDurata(); // Durata del servizio in minuti
             LocalDateTime start = prenotazioneDTO.getDataOraPrenotazione();
@@ -153,4 +155,6 @@ public class PrenotazioneService {
         }
         return false; // Nessuna sovrapposizione
     }
+
+
 }

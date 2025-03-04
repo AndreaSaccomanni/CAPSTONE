@@ -17,7 +17,7 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Long
     List<Prenotazione> findByUtente(Utente utente);
 
     // Trova tutte le prenotazioni in un intervallo di tempo
-    List<Prenotazione> findByDataOraBetween( LocalDateTime start, LocalDateTime end);
+    List<Prenotazione> findAllByDataOraBetween( LocalDateTime start, LocalDateTime end);
 
     boolean existsByDataOra(LocalDateTime dataOra);
 
