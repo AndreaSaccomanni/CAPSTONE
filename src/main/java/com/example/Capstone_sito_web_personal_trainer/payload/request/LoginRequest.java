@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 public class LoginRequest {
     @NotBlank
-    @Size(min = 3, max = 15)
+    @Size(min = 3, max = 20)
     private String username;
 
     @NotBlank
-    @Size(min = 3, max = 15)
+    @Size(min = 3, max = 20)
     private String password;
 
 

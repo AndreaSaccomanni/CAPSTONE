@@ -16,6 +16,7 @@ import com.example.Capstone_sito_web_personal_trainer.service.ConsulenzaService;
 import com.example.Capstone_sito_web_personal_trainer.service.MassaggioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -38,16 +39,25 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private ConsulenzaService consulenzaService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
 // ------------- INSERIMENTO AUTOMATICO DI RUOLI, SERVIZI E ADMIN ----------------
     @Override
     public void run(String... args) throws Exception {
         if (ruoloRepository.count() == 0) {
-            Ruolo userRole = new Ruolo();
-            userRole.setName(UserRole.ADMIN);
-            ruoloRepository.save(userRole);
+
             Ruolo adminRole = new Ruolo();
-            adminRole.setName(UserRole.USER);
+            adminRole.setName(UserRole.ADMIN);
             ruoloRepository.save(adminRole);
+
+            Ruolo userRole = new Ruolo();
+            userRole.setName(UserRole.USER);
+            ruoloRepository.save(userRole);
+
+            Ruolo personalRole = new Ruolo();
+            personalRole.setName(UserRole.PERSONAL_TRAINER);
+            ruoloRepository.save(personalRole);
         }
 
 
@@ -80,10 +90,23 @@ public class DataInitializer implements CommandLineRunner {
             admin.setCognome("Saccomanni");
             admin.setUsername("AndreaSaccomanni");
             admin.setEmail("andrea.saccomanni@gmail.com");
-            admin.setPassword("password");
+            admin.setPassword(passwordEncoder.encode("password"));
             admin.setRuolo(ruoloAdmin.getName());
             admin.setDataDiNascita(LocalDate.of(1997,7,19));
             utenteRepository.save(admin);
+
+            Ruolo ruoloPersonal = ruoloRepository.findByName(UserRole.PERSONAL_TRAINER);
+            Utente personalTrainer = new Utente();
+            personalTrainer.setNome("Alessandro");
+            personalTrainer.setCognome("Saccomanni");
+            personalTrainer.setUsername("aleSaccomanni");
+            personalTrainer.setEmail("alesaccomanni@gmail.com");
+            personalTrainer.setPassword(passwordEncoder.encode("password"));
+            personalTrainer.setRuolo(ruoloPersonal.getName());
+            personalTrainer.setDataDiNascita(LocalDate.of(1999,10,28));
+
+            utenteRepository.save(personalTrainer);
+
         }
 
 
