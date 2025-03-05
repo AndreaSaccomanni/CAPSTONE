@@ -17,7 +17,7 @@ public class MailController {
 
     @Autowired
     MailService mailService;
-
+//
     @PostMapping("/sendMail")
     public ResponseEntity<String> inviaMail(@RequestBody @Validated MailModel mailModel, BindingResult bindingResult) {
 

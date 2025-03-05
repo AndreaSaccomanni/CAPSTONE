@@ -17,4 +17,4 @@ public class MailModel {
 
     @NotNull(message = "Il contenuto non può essere nullo")
     private String contenuto;
-}
+}//

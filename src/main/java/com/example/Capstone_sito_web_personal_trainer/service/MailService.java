@@ -22,7 +22,7 @@ public class MailService {
 
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setFrom("emailsenderale@libero.it");
+        message.setFrom("inviamailsender89@gmail.com");
 
         message.setTo(mailModel.getDestinatario());
 
