@@ -1,8 +1,6 @@
 package com.example.Capstone_sito_web_personal_trainer;
 
 
-import com.example.Capstone_sito_web_personal_trainer.entities.Consulenza;
-import com.example.Capstone_sito_web_personal_trainer.entities.Massaggio;
 import com.example.Capstone_sito_web_personal_trainer.entities.Ruolo;
 import com.example.Capstone_sito_web_personal_trainer.entities.Utente;
 import com.example.Capstone_sito_web_personal_trainer.enumeration.TipoConsulenza;
@@ -21,7 +19,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Component
 public class DataInitializer implements CommandLineRunner {

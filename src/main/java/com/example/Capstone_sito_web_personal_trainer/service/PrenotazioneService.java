@@ -142,15 +142,15 @@ public class PrenotazioneService {
     private boolean isSovrapposizione(LocalDateTime start, LocalDateTime end) {
         List<Prenotazione> prenotazioniEsistenti = prenotazioneRepository.findAll();
 
-        // Verifica se la nuova prenotazione si sovrappone a quelle esistenti
+        // Controllo per vedere se la nuova prenotazione si sovrappone a quelle esistenti
         for (Prenotazione prenotazione : prenotazioniEsistenti) {
             LocalDateTime inizioEsistente = prenotazione.getDataOra();
             int durataServizio = prenotazione.getServizio().getDurata();
             LocalDateTime fineEsistente = inizioEsistente.plusMinutes(durataServizio);
 
-            // Controlla se l'intervallo di tempo della nuova prenotazione si sovrappone con uno esistente
+            // Controllo per vedere se l'intervallo di tempo della nuova prenotazione si sovrappone con uno esistente
             if (start.isBefore(fineEsistente) && end.isAfter(inizioEsistente)) {
-                return true; // C'è sovrapposizione
+                return true; // sovrapposizione
             }
         }
         return false; // Nessuna sovrapposizione

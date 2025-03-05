@@ -45,14 +45,14 @@ public class PrenotazioneController {
     }
 
     // Cancella una prenotazione
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> cancellaPrenotazione(@PathVariable Long id) {
         prenotazioneService.cancellaPrenotazione(id);
         return ResponseEntity.noContent().build();
     }
 
     // Modifica una prenotazione
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<PrenotazioneDTO> modificaPrenotazione(@PathVariable Long id, @RequestBody PrenotazioneDTO prenotazioneDTO) {
         PrenotazioneDTO dto = prenotazioneService.modificaPrenotazione(id, prenotazioneDTO);
         return ResponseEntity.ok(dto);

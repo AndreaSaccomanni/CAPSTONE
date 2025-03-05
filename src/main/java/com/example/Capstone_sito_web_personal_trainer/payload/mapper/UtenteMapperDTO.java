@@ -3,10 +3,15 @@ package com.example.Capstone_sito_web_personal_trainer.payload.mapper;
 import com.example.Capstone_sito_web_personal_trainer.entities.Utente;
 import com.example.Capstone_sito_web_personal_trainer.enumeration.UserRole;
 import com.example.Capstone_sito_web_personal_trainer.payload.UtenteDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UtenteMapperDTO {
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public UtenteDTO toDto(Utente entity) {
         UtenteDTO dto = new UtenteDTO();
@@ -16,10 +21,12 @@ public class UtenteMapperDTO {
         dto.setDataDiNascita(entity.getDataDiNascita());
         dto.setEmail(entity.getEmail());
         dto.setUsername(entity.getUsername());
-        dto.setPassword(entity.getPassword());
+
+
         if (entity.getRuolo() != null) {
             dto.setRuolo(entity.getRuolo().name()); // Converte l'enum in stringa
         }
+
         return dto;
     }
 
@@ -30,7 +37,9 @@ public class UtenteMapperDTO {
         entity.setDataDiNascita(dto.getDataDiNascita());
         entity.setEmail(dto.getEmail());
         entity.setUsername(dto.getUsername());
-        entity.setPassword(dto.getPassword());
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
         if (dto.getRuolo() != null) {
             entity.setRuolo(UserRole.valueOf(dto.getRuolo().toUpperCase())); // Converte la stringa in enum
         }
@@ -53,8 +62,8 @@ public class UtenteMapperDTO {
         if (utenteDTO.getEmail() != null) {
             utente.setEmail(utenteDTO.getEmail());
         }
-        if (utenteDTO.getPassword() != null) {
-            utente.setPassword(utenteDTO.getPassword());
+        if (utenteDTO.getPassword() != null && !utenteDTO.getPassword().isBlank()) {
+            utente.setPassword(passwordEncoder.encode(utenteDTO.getPassword()));
         }
         if(utenteDTO.getRuolo() != null){
             utente.setRuolo(UserRole.valueOf(utenteDTO.getRuolo()));
