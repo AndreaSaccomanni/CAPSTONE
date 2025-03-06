@@ -5,8 +5,10 @@ import com.example.Capstone_sito_web_personal_trainer.service.PrenotazioneServic
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -24,7 +26,7 @@ public class PrenotazioneController {
     }
 
     //tutte le prenotazioni
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<PrenotazioneDTO>> getAllPrenotazioni() {
         List<PrenotazioneDTO> prenotazioni = prenotazioneService.getAllPrenotazioni();
         return ResponseEntity.ok(prenotazioni);
@@ -46,14 +48,14 @@ public class PrenotazioneController {
 
     // Cancella una prenotazione
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> cancellaPrenotazione(@PathVariable Long id) {
+    public ResponseEntity<Void> cancellaPrenotazione(@PathVariable Long id) throws AccessDeniedException {
         prenotazioneService.cancellaPrenotazione(id);
         return ResponseEntity.noContent().build();
     }
 
     // Modifica una prenotazione
     @PutMapping("/update/{id}")
-    public ResponseEntity<PrenotazioneDTO> modificaPrenotazione(@PathVariable Long id, @RequestBody PrenotazioneDTO prenotazioneDTO) {
+    public ResponseEntity<PrenotazioneDTO> modificaPrenotazione(@PathVariable Long id, @RequestBody PrenotazioneDTO prenotazioneDTO) throws AccessDeniedException {
         PrenotazioneDTO dto = prenotazioneService.modificaPrenotazione(id, prenotazioneDTO);
         return ResponseEntity.ok(dto);
     }

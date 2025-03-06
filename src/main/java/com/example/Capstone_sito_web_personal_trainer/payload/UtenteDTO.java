@@ -1,5 +1,6 @@
 package com.example.Capstone_sito_web_personal_trainer.payload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -28,6 +29,7 @@ public class UtenteDTO {
     @NotBlank(message = "Il campo 'email' non può essere vuoto")
     @Email(message = "Inserire una email valida")
     private String email;
+
 
     @NotBlank(message = "Il campo password è obblgatorio")
     @Size(min = 3)

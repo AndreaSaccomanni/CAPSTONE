@@ -62,16 +62,18 @@ public class WebSecurityConfig {
                         .requestMatchers("/utenti/login").permitAll()
                         .requestMatchers("/mail/sendMail").permitAll()
                         .requestMatchers("/error").permitAll()
+
+                        // Permessi per USER
                         .requestMatchers("/prenotazioni/new").hasAuthority("USER")
-                        .requestMatchers("/prenotazioni/delete/**").hasAuthority("USER")
                         .requestMatchers("/prenotazioni/update/**").hasAuthority("USER")
-                        .requestMatchers("/prenotazioni/new").hasAuthority("ADMIN")
-                        .requestMatchers("/prenotazioni/delete/**").hasAuthority("ADMIN")
-                        .requestMatchers("/prenotazioni/update/**").hasAuthority("ADMIN")
-//                        .requestMatchers( "/prenotazioni/**").hasAuthority("ADMIN")
-//                        .requestMatchers( "/utenti/**").hasAuthority("ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/prenotazioni/delete/**").hasAuthority("ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/prenotazioni/delete/**").hasAuthority("ADMIN")
+                        .requestMatchers("/prenotazioni/delete/**").hasAuthority("USER")
+
+                        // Permessi per PERSONAL_TRAINER
+                        .requestMatchers("/prenotazioni/**").hasAuthority("PERSONAL_TRAINER")
+
+                        // Permessi per ADMIN (può fare tutto)
+                        .requestMatchers("/prenotazioni/**").hasAuthority("ADMIN")
+                        .requestMatchers("/utenti/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

@@ -83,7 +83,7 @@ public class UtenteController {
     }
 
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<UtenteDTO>> getAllUtenti(){
         List<UtenteDTO> utenti = utenteService.getAllUtenti();
         return ResponseEntity.ok(utenti);
@@ -94,13 +94,13 @@ public class UtenteController {
         return ResponseEntity.ok(utenteService.getUtenteById(id));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUtente(@PathVariable Long id){
         utenteService.deleteUtente(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<UtenteDTO> updateUtente(@PathVariable Long id, @RequestBody UtenteDTO utenteDTO){
         return ResponseEntity.ok(utenteService.updateUtente(id, utenteDTO));
     }

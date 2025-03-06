@@ -17,12 +17,11 @@ public class MailController {
 
     @Autowired
     MailService mailService;
-//
+
     @PostMapping("/sendMail")
     public ResponseEntity<String> inviaMail(@RequestBody @Validated MailModel mailModel, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            // Se ci sono errori di validazione, restituisci il messaggio di errore
             return ResponseEntity.badRequest().body("Errore di validazione: " + bindingResult.getAllErrors().toString());
         }
 

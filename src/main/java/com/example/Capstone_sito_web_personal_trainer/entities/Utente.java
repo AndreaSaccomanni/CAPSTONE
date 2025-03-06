@@ -1,6 +1,7 @@
 package com.example.Capstone_sito_web_personal_trainer.entities;
 
 import com.example.Capstone_sito_web_personal_trainer.enumeration.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,7 @@ import java.util.Set;
 public class Utente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private String nome;
@@ -34,6 +35,8 @@ public class Utente {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)
