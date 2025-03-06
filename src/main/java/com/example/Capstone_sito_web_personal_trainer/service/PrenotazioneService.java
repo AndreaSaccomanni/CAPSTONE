@@ -7,6 +7,7 @@ import com.example.Capstone_sito_web_personal_trainer.exception.ClosedException;
 import com.example.Capstone_sito_web_personal_trainer.payload.PrenotazioneDTO;
 import com.example.Capstone_sito_web_personal_trainer.payload.mapper.PrenotazioneMapperDTO;
 import com.example.Capstone_sito_web_personal_trainer.payload.mapper.UtenteMapperDTO;
+import com.example.Capstone_sito_web_personal_trainer.payload.request.CreaPrenotazioneRequest;
 import com.example.Capstone_sito_web_personal_trainer.repositories.PrenotazioneRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.UtenteRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.ServizioRepository;
@@ -40,14 +41,15 @@ public class PrenotazioneService {
     private PrenotazioneMapperDTO prenotazioneMapperDTO;
 
 
-    public PrenotazioneDTO creaPrenotazione(PrenotazioneDTO prenotazioneDTO) {
+    public PrenotazioneDTO creaPrenotazione(CreaPrenotazioneRequest prenotazioneDTO) {
         // Recupero il servizio
         Servizio servizio = servizioRepository.findById(prenotazioneDTO.getServizioId())
                 .orElseThrow(() -> new EntityNotFoundException("⚠️ Servizio non trovato! ⚠️"));
 
-        // Recupero l'utente
-        Utente utente = utenteRepository.findById(prenotazioneDTO.getUtenteId())
-                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato!"));
+        // Ricavo l'utente loggato dal contesto di sicurezza
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Utente utenteLoggato = userDetails.getUser();
 
 
         LocalDateTime dataOraPrenotazione = prenotazioneDTO.getDataOraPrenotazione();
@@ -81,8 +83,8 @@ public class PrenotazioneService {
 
 
         // Creo la nuova prenotazione
-        Prenotazione prenotazione = prenotazioneMapperDTO.toEntity(prenotazioneDTO);
-        prenotazione.setUtente(utente);
+        Prenotazione prenotazione = prenotazioneMapperDTO.requestToEntity(prenotazioneDTO);
+        prenotazione.setUtente(utenteLoggato);
         prenotazione.setServizio(servizio);
         prenotazione.setDataOra(dataOraPrenotazione);
 
@@ -108,7 +110,7 @@ public class PrenotazioneService {
             throw new EntityNotFoundException("⚠️ Prenotazione non trovata ️ ️⚠️");
         }
 
-        // Ottieni l'utente loggato dal contesto di sicurezza
+        // Ricavo l'utente loggato dal contesto di sicurezza
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Utente utenteLoggato = userDetails.getUser();

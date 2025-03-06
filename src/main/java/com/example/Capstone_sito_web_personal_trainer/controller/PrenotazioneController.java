@@ -1,6 +1,7 @@
 package com.example.Capstone_sito_web_personal_trainer.controller;
 
 import com.example.Capstone_sito_web_personal_trainer.payload.PrenotazioneDTO;
+import com.example.Capstone_sito_web_personal_trainer.payload.request.CreaPrenotazioneRequest;
 import com.example.Capstone_sito_web_personal_trainer.service.PrenotazioneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class PrenotazioneController {
 
     //nuova prenotazione
     @PostMapping("/new")
-    public ResponseEntity<?> creaPrenotazione(@RequestBody PrenotazioneDTO prenotazioneDTO) {
+    public ResponseEntity<?> creaPrenotazione(@RequestBody CreaPrenotazioneRequest prenotazioneDTO) {
         PrenotazioneDTO dto = prenotazioneService.creaPrenotazione(prenotazioneDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
