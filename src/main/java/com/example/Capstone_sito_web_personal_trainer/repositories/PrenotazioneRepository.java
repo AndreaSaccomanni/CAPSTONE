@@ -1,11 +1,9 @@
 package com.example.Capstone_sito_web_personal_trainer.repositories;
 
 import com.example.Capstone_sito_web_personal_trainer.entities.Prenotazione;
-import com.example.Capstone_sito_web_personal_trainer.entities.Servizio;
 import com.example.Capstone_sito_web_personal_trainer.entities.Utente;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
 
 import java.time.LocalDateTime;
 import java.util.List;

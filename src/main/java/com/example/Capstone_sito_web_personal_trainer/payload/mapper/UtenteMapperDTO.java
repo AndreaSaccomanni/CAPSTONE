@@ -3,7 +3,6 @@ package com.example.Capstone_sito_web_personal_trainer.payload.mapper;
 import com.example.Capstone_sito_web_personal_trainer.entities.Utente;
 import com.example.Capstone_sito_web_personal_trainer.enumeration.UserRole;
 import com.example.Capstone_sito_web_personal_trainer.payload.UtenteDTO;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

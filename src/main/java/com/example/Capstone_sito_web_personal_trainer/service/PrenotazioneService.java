@@ -7,7 +7,6 @@ import com.example.Capstone_sito_web_personal_trainer.entities.Servizio;
 import com.example.Capstone_sito_web_personal_trainer.exception.ClosedException;
 import com.example.Capstone_sito_web_personal_trainer.payload.PrenotazioneDTO;
 import com.example.Capstone_sito_web_personal_trainer.payload.mapper.PrenotazioneMapperDTO;
-import com.example.Capstone_sito_web_personal_trainer.payload.mapper.UtenteMapperDTO;
 import com.example.Capstone_sito_web_personal_trainer.payload.request.CreaPrenotazioneRequest;
 import com.example.Capstone_sito_web_personal_trainer.repositories.PrenotazioneRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.UtenteRepository;
@@ -60,6 +59,10 @@ public class PrenotazioneService {
         int durata = servizio.getDurata(); // Durata in minuti
         LocalDateTime finePrenotazione = dataOraPrenotazione.plusMinutes(durata);
 
+        // Controllo per verificare che la data inserita non sia passata
+        if (dataOraPrenotazione.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("⚠️ Non è possibile prenotare un appuntamento per una data passata ⚠️");
+        }
 
         //controllo per vedere se la prenotazione è di domenica
         if (prenotazioneDTO.getDataOraPrenotazione().getDayOfWeek() == DayOfWeek.SUNDAY) {
@@ -177,6 +180,11 @@ public class PrenotazioneService {
             LocalDateTime dataOraPrenotazione = prenotazioneDTO.getDataOraPrenotazione();
             int durata = servizio.getDurata(); // Durata in minuti
             LocalDateTime finePrenotazione = dataOraPrenotazione.plusMinutes(durata);
+
+            // Controllo per verificare che la data inserita non sia passaat
+            if (dataOraPrenotazione.isBefore(LocalDateTime.now())) {
+                throw new IllegalArgumentException("⚠️ Non è possibile prenotare un appuntamento per una data passata ⚠️");
+            }
 
             //controllo per vedere se la prenotazione è di domenica
             if (prenotazioneDTO.getDataOraPrenotazione().getDayOfWeek() == DayOfWeek.SUNDAY) {

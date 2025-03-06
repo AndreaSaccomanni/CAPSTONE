@@ -1,6 +1,5 @@
 package com.example.Capstone_sito_web_personal_trainer.payload;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

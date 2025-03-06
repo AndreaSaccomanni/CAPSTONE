@@ -3,10 +3,8 @@ package com.example.Capstone_sito_web_personal_trainer.security;
 import com.example.Capstone_sito_web_personal_trainer.security.jwt.AuthEntryPoint;
 import com.example.Capstone_sito_web_personal_trainer.security.jwt.FiltroAuthToken;
 import com.example.Capstone_sito_web_personal_trainer.security.services.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -63,16 +61,17 @@ public class WebSecurityConfig {
                         .requestMatchers("/mail/sendMail").permitAll()
                         .requestMatchers("/error").permitAll()
 
-                        // Permessi per USER
-                        .requestMatchers("/prenotazioni/new").hasAuthority("USER")
-                        .requestMatchers("/prenotazioni/update/**").hasAuthority("USER")
-                        .requestMatchers("/prenotazioni/delete/**").hasAuthority("USER")
-
                         // Permessi per PERSONAL_TRAINER
                         .requestMatchers("/prenotazioni/**").hasAuthority("PERSONAL_TRAINER")
 
                         // Permessi per ADMIN ---> può fare tutto
                         .requestMatchers("/**").hasAuthority("ADMIN")
+
+                        // Permessi per USER
+                        .requestMatchers("/prenotazioni/new").hasAuthority("USER")
+                        .requestMatchers("/prenotazioni/update/**").hasAuthority("USER")
+                        .requestMatchers("/prenotazioni/delete/**").hasAuthority("USER")
+
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
