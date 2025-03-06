@@ -33,4 +33,8 @@ public class Consulenza extends Servizio{
         }
     }
 
+    @Override
+    public String getNomeServizio() {
+        return "Consulenza " + tipoConsulenza.name();
+    }
 }

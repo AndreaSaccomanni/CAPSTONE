@@ -28,5 +28,10 @@ public class Massaggio extends Servizio {
         }
 
 
+}
 
-}}
+    @Override
+    public String getNomeServizio() {
+        return "Massaggio " + tipoMassaggio.name();
+    }
+}

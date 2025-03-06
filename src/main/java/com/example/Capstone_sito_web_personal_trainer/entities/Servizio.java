@@ -21,4 +21,6 @@ public abstract class Servizio {
     private int durata;
 
 
+    public abstract String getNomeServizio();
+
 }

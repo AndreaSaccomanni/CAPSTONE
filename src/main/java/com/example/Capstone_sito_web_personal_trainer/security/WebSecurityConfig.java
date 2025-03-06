@@ -71,9 +71,8 @@ public class WebSecurityConfig {
                         // Permessi per PERSONAL_TRAINER
                         .requestMatchers("/prenotazioni/**").hasAuthority("PERSONAL_TRAINER")
 
-                        // Permessi per ADMIN (può fare tutto)
-                        .requestMatchers("/prenotazioni/**").hasAuthority("ADMIN")
-                        .requestMatchers("/utenti/**").hasAuthority("ADMIN")
+                        // Permessi per ADMIN ---> può fare tutto
+                        .requestMatchers("/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

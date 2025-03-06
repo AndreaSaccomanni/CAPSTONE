@@ -1,5 +1,6 @@
 package com.example.Capstone_sito_web_personal_trainer.service;
 
+import com.example.Capstone_sito_web_personal_trainer.entities.MailModel;
 import com.example.Capstone_sito_web_personal_trainer.entities.Prenotazione;
 import com.example.Capstone_sito_web_personal_trainer.entities.Utente;
 import com.example.Capstone_sito_web_personal_trainer.entities.Servizio;
@@ -39,6 +40,9 @@ public class PrenotazioneService {
 
     @Autowired
     private PrenotazioneMapperDTO prenotazioneMapperDTO;
+
+    @Autowired
+    MailService mailService;
 
 
     public PrenotazioneDTO creaPrenotazione(CreaPrenotazioneRequest prenotazioneDTO) {
@@ -90,6 +94,27 @@ public class PrenotazioneService {
 
         // Salvo la prenotazione
         prenotazione = prenotazioneRepository.save(prenotazione);
+
+        String destinatario = utenteLoggato.getEmail();
+        String oggetto = "Conferma Prenotazione - " + servizio.getNomeServizio();
+
+        String contenuto = "Ciao " + utenteLoggato.getNome() + ",\n\n"
+                + "La tua prenotazione per il servizio '" + servizio.getNomeServizio() + "' è stata confermata.\n"
+                + "Dettagli:\n"
+                + "📅 Data: " + dataOraPrenotazione.toLocalDate() + "\n"
+                + "🕒 Orario: " + dataOraPrenotazione.toLocalTime() + "\n"
+                + "⌛ Durata: " + durata + " minuti\n\n"
+                + "Grazie!\n"
+                + "Cordiali saluti,\nAlessandro";
+
+        //Creo l'oggetto per la mail
+        MailModel mailModel = new MailModel();
+
+        mailModel.setDestinatario(destinatario);
+        mailModel.setOggetto(oggetto);
+        mailModel.setContenuto(contenuto);
+
+        mailService.inviaEmail(mailModel);
 
         return prenotazioneMapperDTO.toDto(prenotazione);
     }
