@@ -42,8 +42,8 @@ public class Utente {
     @Enumerated(EnumType.STRING)
     private UserRole ruolo;
 
-   @OneToMany(mappedBy = "utente")
-    private Set<Prenotazione> prenotazioni;
+   @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Prenotazione> prenotazioni;
 
     @Override
     public String toString() {

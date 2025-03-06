@@ -6,6 +6,7 @@ import com.example.Capstone_sito_web_personal_trainer.exception.EmailDuplicateEx
 import com.example.Capstone_sito_web_personal_trainer.exception.UsernameDuplicateException;
 import com.example.Capstone_sito_web_personal_trainer.payload.UtenteDTO;
 import com.example.Capstone_sito_web_personal_trainer.payload.mapper.UtenteMapperDTO;
+import com.example.Capstone_sito_web_personal_trainer.repositories.PrenotazioneRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.UtenteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class UtenteService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    PrenotazioneRepository prenotazioneRepository;
 
     public UtenteDTO registraUtente(UtenteDTO utenteDTO) throws InterruptedException{
 
@@ -54,9 +58,11 @@ public class UtenteService {
     }
 
     public void deleteUtente(Long id){
-        if(!utenteRepository.existsById(id)){
-            throw new EntityNotFoundException("Utente non trovato!⚠️");
-        }
+
+        Utente utente = utenteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utente non trovato!⚠️"));
+
+        prenotazioneRepository.deleteAll(utente.getPrenotazioni());
+
         utenteRepository.deleteById(id);
     }
 
