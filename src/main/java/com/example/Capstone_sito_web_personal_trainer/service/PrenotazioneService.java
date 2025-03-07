@@ -148,11 +148,12 @@ public class PrenotazioneService {
                 .orElseThrow(() -> new EntityNotFoundException("⚠️ Prenotazione non trovata ️ ️⚠️"));
 
         // Controllo per vedere se la prenotazione appartiene all'utente loggato
-        if (!prenotazione.getUtente().getId().equals(utenteLoggato.getId())) {
+        if (prenotazione.getUtente().getId().equals(utenteLoggato.getId()) || utenteLoggato.getRuolo().name().equals("ADMIN") || utenteLoggato.getRuolo().name().equals("PERSONAL_TRAINER")) {
+            prenotazioneRepository.deleteById(id);
+        } else {
             throw new AccessDeniedException("⚠️ Non puoi cancellare questa prenotazione ⚠️");
         }
 
-        prenotazioneRepository.deleteById(id);
     }
 
     public PrenotazioneDTO modificaPrenotazione(Long id, PrenotazioneDTO prenotazioneDTO) throws AccessDeniedException {
@@ -166,75 +167,79 @@ public class PrenotazioneService {
         Utente utenteLoggato = userDetails.getUser();
 
         // Controllo per vedere se la prenotazione appartiene all'utente loggato
-        if (!prenotazione.getUtente().getId().equals(utenteLoggato.getId())) {
-            throw new AccessDeniedException("⚠️ Non puoi modificare questa prenotazione ⚠️");
-        }
+        if (prenotazione.getUtente().getId().equals(utenteLoggato.getId()) || utenteLoggato.getRuolo().name().equals("ADMIN") || utenteLoggato.getRuolo().name().equals("PERSONAL_TRAINER")) {
 
-        // PER MODIFICARE LA DATA DI UNA PRENOTAZIONE BISOGNA INSERIRE ANCHE L'ID DEL SERVIZIO
-        if (prenotazioneDTO.getDataOraPrenotazione() != null) {
-            // Recupera il servizio scelto e la durata
-            Servizio servizio = servizioRepository.findById(prenotazioneDTO.getServizioId())
-                    .orElseThrow(() -> new EntityNotFoundException("⚠️ Servizio non trovato!⚠️"));
-            prenotazione.setServizio(servizio);
+            // PER MODIFICARE LA DATA DI UNA PRENOTAZIONE BISOGNA INSERIRE ANCHE L'ID DEL SERVIZIO
+            if (prenotazioneDTO.getDataOraPrenotazione() != null) {
+                // Recupera il servizio scelto e la durata
+                Servizio servizio = servizioRepository.findById(prenotazioneDTO.getServizioId())
+                        .orElseThrow(() -> new EntityNotFoundException("⚠️ Servizio non trovato!⚠️"));
+                prenotazione.setServizio(servizio);
 
-            LocalDateTime dataOraPrenotazione = prenotazioneDTO.getDataOraPrenotazione();
-            int durata = servizio.getDurata(); // Durata in minuti
-            LocalDateTime finePrenotazione = dataOraPrenotazione.plusMinutes(durata);
+                LocalDateTime dataOraPrenotazione = prenotazioneDTO.getDataOraPrenotazione();
+                int durata = servizio.getDurata(); // Durata in minuti
+                LocalDateTime finePrenotazione = dataOraPrenotazione.plusMinutes(durata);
 
-            // Controllo per verificare che la data inserita non sia passaat
-            if (dataOraPrenotazione.isBefore(LocalDateTime.now())) {
-                throw new IllegalArgumentException("⚠️ Non è possibile prenotare un appuntamento per una data passata ⚠️");
-            }
-
-            //controllo per vedere se la prenotazione è di domenica
-            if (prenotazioneDTO.getDataOraPrenotazione().getDayOfWeek() == DayOfWeek.SUNDAY) {
-                throw new ClosedException("⚠️ Non si possono prenotare appuntamenti la domenica ⚠️");
-            }
-
-            // Se la prenotazione è per sabato, l'ultimo appuntamento deve finire entro le 13:00
-            if (dataOraPrenotazione.getDayOfWeek() == DayOfWeek.SATURDAY) {
-                LocalTime orarioFine = dataOraPrenotazione.toLocalTime().plusMinutes(durata);
-
-                if (orarioFine.isAfter(LocalTime.of(13, 0))) {
-                    throw new ClosedException("⚠️ Il sabato gli appuntamenti devono concludersi entro le 13:00 ⚠️");
+                // Controllo per verificare che la data inserita non sia passaat
+                if (dataOraPrenotazione.isBefore(LocalDateTime.now())) {
+                    throw new IllegalArgumentException("⚠️ Non è possibile prenotare un appuntamento per una data passata ⚠️");
                 }
+
+                //controllo per vedere se la prenotazione è di domenica
+                if (prenotazioneDTO.getDataOraPrenotazione().getDayOfWeek() == DayOfWeek.SUNDAY) {
+                    throw new ClosedException("⚠️ Non si possono prenotare appuntamenti la domenica ⚠️");
+                }
+
+                // Se la prenotazione è per sabato, l'ultimo appuntamento deve finire entro le 13:00
+                if (dataOraPrenotazione.getDayOfWeek() == DayOfWeek.SATURDAY) {
+                    LocalTime orarioFine = dataOraPrenotazione.toLocalTime().plusMinutes(durata);
+
+                    if (orarioFine.isAfter(LocalTime.of(13, 0))) {
+                        throw new ClosedException("⚠️ Il sabato gli appuntamenti devono concludersi entro le 13:00 ⚠️");
+                    }
+                }
+
+                //ORARIO CHIUSURA STUDIO ORE 20:30, se il servizio finisce dopo non si può prenotare
+                if (finePrenotazione.toLocalTime().isAfter(LocalTime.of(20, 30))) {
+                    throw new ClosedException("⚠️ Gli appuntamenti devono concludersi entro le 20:30 ⚠️");
+                }
+
+                // Controllo per vedere se ci sono sovrapposizioni con altre prenotazioni
+                if (isSovrapposizione(dataOraPrenotazione, finePrenotazione)) {
+                    throw new IllegalArgumentException("⚠️ Impossibile creare una prenotazione per l'ora e la data selezionata ⚠️");
+                }
+
+                prenotazione.setDataOra(dataOraPrenotazione); // Aggiorna la data e ora della prenotazione
             }
 
-            //ORARIO CHIUSURA STUDIO ORE 20:30, se il servizio finisce dopo non si può prenotare
-            if (finePrenotazione.toLocalTime().isAfter(LocalTime.of(20, 30))) {
-                throw new ClosedException("⚠️ Gli appuntamenti devono concludersi entro le 20:30 ⚠️");
+            // Se viene fornito un nuovo servizio, aggiorna
+            if (prenotazioneDTO.getServizioId() != null) {
+                Servizio servizio = servizioRepository.findById(prenotazioneDTO.getServizioId())
+                        .orElseThrow(() -> new EntityNotFoundException("⚠️  ️Servizio non trovato! ⚠️"));
+                prenotazione.setServizio(servizio);
             }
 
-            // Controllo per vedere se ci sono sovrapposizioni con altre prenotazioni
-            if (isSovrapposizione(dataOraPrenotazione, finePrenotazione)) {
-                throw new IllegalArgumentException("⚠️ Impossibile creare una prenotazione per l'ora e la data selezionata ⚠️");
+            // Se viene fornito un nuovo utente, aggiorna
+            if (prenotazioneDTO.getUtenteId() != null) {
+                Utente utente = utenteRepository.findById(prenotazioneDTO.getUtenteId())
+                        .orElseThrow(() -> new EntityNotFoundException("⚠️ Utente non trovato! ⚠️"));
+                prenotazione.setUtente(utente);
             }
 
-            prenotazione.setDataOra(dataOraPrenotazione); // Aggiorna la data e ora della prenotazione
+            // Se vengono inserite nuove note, aggiorna
+            if (prenotazioneDTO.getNote() != null) {
+                prenotazione.setNote(prenotazioneDTO.getNote());
+            }
+
+            // Salvo la prenotazione aggiornata
+            prenotazione = prenotazioneRepository.save(prenotazione);
+            return prenotazioneMapperDTO.toDto(prenotazione);
+
+        } else {
+            throw new AccessDeniedException("⚠️ Non puoi cancellare questa prenotazione ⚠️");
         }
 
-        // Se viene fornito un nuovo servizio, aggiorna
-        if (prenotazioneDTO.getServizioId() != null) {
-            Servizio servizio = servizioRepository.findById(prenotazioneDTO.getServizioId())
-                    .orElseThrow(() -> new EntityNotFoundException("⚠️  ️Servizio non trovato! ⚠️"));
-            prenotazione.setServizio(servizio);
-        }
 
-        // Se viene fornito un nuovo utente, aggiorna
-        if (prenotazioneDTO.getUtenteId() != null) {
-            Utente utente = utenteRepository.findById(prenotazioneDTO.getUtenteId())
-                    .orElseThrow(() -> new EntityNotFoundException("⚠️ Utente non trovato! ⚠️"));
-            prenotazione.setUtente(utente);
-        }
-
-        // Se vengono inserite nuove note, aggiorna
-        if (prenotazioneDTO.getNote() != null) {
-            prenotazione.setNote(prenotazioneDTO.getNote());
-        }
-
-        // Salvo la prenotazione aggiornata
-        prenotazione = prenotazioneRepository.save(prenotazione);
-        return prenotazioneMapperDTO.toDto(prenotazione);
     }
 
     // Tutte le prenotazioni di un cliente
