@@ -4,11 +4,14 @@ import com.example.Capstone_sito_web_personal_trainer.payload.PrenotazioneDTO;
 import com.example.Capstone_sito_web_personal_trainer.payload.request.CreaPrenotazioneRequest;
 import com.example.Capstone_sito_web_personal_trainer.service.PrenotazioneService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -58,5 +61,13 @@ public class PrenotazioneController {
     public ResponseEntity<PrenotazioneDTO> modificaPrenotazione(@PathVariable Long id, @RequestBody PrenotazioneDTO prenotazioneDTO) throws AccessDeniedException {
         PrenotazioneDTO dto = prenotazioneService.modificaPrenotazione(id, prenotazioneDTO);
         return ResponseEntity.ok(dto);
+    }
+
+    // Orari disponibili nel giorno selezionato
+    @GetMapping("/orariDisponibili")
+    public ResponseEntity<List<LocalDateTime>> getOrariDisponibili(
+            @RequestParam("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
+            @RequestParam("servizioId") Long servizioId) {
+        return ResponseEntity.ok(prenotazioneService.getOrariDisponibili(data, servizioId));
     }
 }

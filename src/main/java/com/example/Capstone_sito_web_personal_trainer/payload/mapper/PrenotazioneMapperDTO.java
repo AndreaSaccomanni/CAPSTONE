@@ -20,10 +20,15 @@ public class PrenotazioneMapperDTO {
 
     public PrenotazioneDTO toDto(Prenotazione entity) {
         PrenotazioneDTO dto = new PrenotazioneDTO();
+        dto.setPrenotazioneId(entity.getId());
         dto.setUtenteId(entity.getUtente().getId());
         dto.setServizioId(entity.getServizio().getId());
         dto.setDataOraPrenotazione(entity.getDataOra());
         dto.setNote(entity.getNote());
+
+        dto.setNomeUtente(entity.getUtente().getNome());
+        dto.setCognomeUtente(entity.getUtente().getCognome());
+        dto.setNomeServizio(entity.getServizio().getNomeServizio());
         return dto;
     }
 

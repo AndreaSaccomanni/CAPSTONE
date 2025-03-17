@@ -16,6 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -52,6 +55,14 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(cors -> cors.configurationSource(request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedOrigins(List.of("http://localhost:5173")); // indirizzo frontend
+            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            config.setAllowedHeaders(List.of("*"));
+            config.setAllowCredentials(true);
+            return config;
+        }));
         http.csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(gestoreNOAuthorization))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -59,20 +70,20 @@ public class WebSecurityConfig {
                         .requestMatchers("/utenti/registrazione").permitAll()
                         .requestMatchers("/utenti/login").permitAll()
                         .requestMatchers("/mail/sendMail").permitAll()
+                        .requestMatchers("/servizi/**").permitAll()
                         .requestMatchers("/error").permitAll()
 
                         .requestMatchers("/prenotazioni/new").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/prenotazioni/update/**").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/prenotazioni/delete/**").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
+                        .requestMatchers("/prenotazioni/utente/**").hasAnyAuthority( "USER","ADMIN", "PERSONAL_TRAINER")
 
                         .requestMatchers("/prenotazioni/all").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
-                        .requestMatchers("/prenotazioni/utenti/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
 
                         .requestMatchers("/utenti/all").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/utenti/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/utenti/delete/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/utenti/update/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
-
 
 
                         // Permessi per ADMIN ---> può fare tutto
