@@ -64,6 +64,9 @@ public class PrenotazioneService {
         LocalDateTime dataOraPrenotazione = prenotazioneDTO.getDataOraPrenotazione();
         int durata = servizio.getDurata(); // Durata in minuti
         LocalDateTime finePrenotazione = dataOraPrenotazione.plusMinutes(durata);
+        LocalTime oraInizio = dataOraPrenotazione.toLocalTime();
+
+
 
         // Controllo per verificare che la data inserita non sia passata
         if (dataOraPrenotazione.isBefore(LocalDateTime.now())) {
@@ -82,6 +85,11 @@ public class PrenotazioneService {
             if (orarioFine.isAfter(LocalTime.of(13, 0))) {
                 throw new ClosedException("Il sabato gli appuntamenti devono concludersi entro le 13:00 ");
             }
+        }
+
+        //ORARIO APERTURA STUDIO ORE 9:00, non si possono prendere appunntamenti ceh iniziano prima
+        if(oraInizio.isBefore(LocalTime.of(9, 0)) ){
+            throw new IllegalArgumentException(" Non è possibile prenotare appuntamenti prima delle 9:00");
         }
 
         //ORARIO CHIUSURA STUDIO ORE 20:30, se il servizio finisce dopo non si può prenotare
@@ -172,7 +180,7 @@ public class PrenotazioneService {
             String oggetto = "Cancellazione Prenotazione - " + prenotazione.getServizio().getNomeServizio();
 
             String contenuto = "Ciao " + utenteLoggato.getNome() + ",\n\n"
-                    + "La tua prenotazione per il servizio '" + prenotazione.getServizio().getNomeServizio() + " prevista per il " +dataFormattata  + " alle: " + prenotazione.getDataOra().toLocalTime() + "' è stata cancellata con successo.\n\n"
+                    + "La tua prenotazione per il servizio '" + prenotazione.getServizio().getNomeServizio() + " prevista per il " +dataFormattata  + " alle: " + prenotazione.getDataOra().toLocalTime() + " è stata cancellata con successo.\n\n"
                     + "Se la cancellazione è avvenuta per errore o desideri prenotare un nuovo appuntamento,\n"
                     + "puoi farlo direttamente accedendo alla tua area personale o contattandoci.\n\n"
                     + "Grazie!\n"
@@ -214,6 +222,7 @@ public class PrenotazioneService {
                 LocalDateTime dataOraPrenotazione = prenotazioneDTO.getDataOraPrenotazione();
                 int durata = servizio.getDurata(); // Durata in minuti
                 LocalDateTime finePrenotazione = dataOraPrenotazione.plusMinutes(durata);
+                LocalTime oraInizio = dataOraPrenotazione.toLocalTime();
 
                 // Controllo per verificare che la data inserita non sia passaat
                 if (dataOraPrenotazione.isBefore(LocalDateTime.now())) {
@@ -232,6 +241,11 @@ public class PrenotazioneService {
                     if (orarioFine.isAfter(LocalTime.of(13, 0))) {
                         throw new ClosedException("Il sabato gli appuntamenti devono concludersi entro le 13:00 ");
                     }
+                }
+
+                //ORARIO APERTURA STUDIO ORE 9:00, non si possono prendere appunntamenti ceh iniziano prima
+                if(oraInizio.isBefore(LocalTime.of(9, 0)) ){
+                    throw new IllegalArgumentException(" Non è possibile prenotare appuntamenti prima delle 9:00");
                 }
 
                 //ORARIO CHIUSURA STUDIO ORE 20:30, se il servizio finisce dopo non si può prenotare
