@@ -15,7 +15,7 @@ public class UtenteMapperDTO {
 
     public UtenteDTO toDto(Utente entity) {
         UtenteDTO dto = new UtenteDTO();
-
+        dto.setId(entity.getId());
         dto.setNome(entity.getNome());
         dto.setCognome(entity.getCognome());
         dto.setDataDiNascita(entity.getDataDiNascita());
@@ -32,6 +32,7 @@ public class UtenteMapperDTO {
 
     public Utente toEntity(UtenteDTO dto) {
         Utente entity = new Utente();
+        entity.setId(dto.getId());
         entity.setNome(dto.getNome());
         entity.setCognome(dto.getCognome());
         entity.setDataDiNascita(dto.getDataDiNascita());
@@ -47,6 +48,9 @@ public class UtenteMapperDTO {
     }
 
     public Utente updateUtente(UtenteDTO utenteDTO, Utente utente){
+        if(utenteDTO.getId() != null){
+            utente.setId(utente.getId());
+        }
         if(utenteDTO.getNome() != null){
             utente.setNome(utenteDTO.getNome());
         }

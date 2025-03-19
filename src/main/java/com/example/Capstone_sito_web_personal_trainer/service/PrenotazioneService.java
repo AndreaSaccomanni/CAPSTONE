@@ -59,14 +59,10 @@ public class PrenotazioneService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Utente utenteLoggato = userDetails.getUser();
 
-
-
         LocalDateTime dataOraPrenotazione = prenotazioneDTO.getDataOraPrenotazione();
         int durata = servizio.getDurata(); // Durata in minuti
         LocalDateTime finePrenotazione = dataOraPrenotazione.plusMinutes(durata);
         LocalTime oraInizio = dataOraPrenotazione.toLocalTime();
-
-
 
         // Controllo per verificare che la data inserita non sia passata
         if (dataOraPrenotazione.isBefore(LocalDateTime.now())) {
@@ -103,7 +99,6 @@ public class PrenotazioneService {
         }
 
 
-
         // Creo la nuova prenotazione
         Prenotazione prenotazione = prenotazioneMapperDTO.requestToEntity(prenotazioneDTO);
         prenotazione.setUtente(utenteLoggato);
@@ -124,10 +119,10 @@ public class PrenotazioneService {
                 + "Dettagli:\n\n"
                 + "📅 Data: " + dataFormattata+ "\n"
                 + "🕒 Orario: " + dataOraPrenotazione.toLocalTime() + "\n"
-                + "⌛ Durata: " + durata + " minuti\n\n"
+                + "⌛ Durata: " + durata + " minuti\n"
                 + (prenotazione.getNote() != null ? "📝 Note: " + prenotazione.getNote() + "\n\n" : "")
                 + "Grazie!\n"
-                + "A presto, cordiali saluti,\nDott.Alessandro";
+                + "A presto, cordiali saluti,\n\nDott.Alessandro";
 
         //Creo l'oggetto per la mail
         MailModel mailModel = new MailModel();
@@ -147,7 +142,7 @@ public class PrenotazioneService {
         return prenotazioneMapperDTO.toDto(prenotazione);
     }
 
-    //tutte le prenotazioni future, quelle con data passata rispetto alla data di oggi non verranno mostrate nel front-end
+    //mostra tutte le prenotazioni future, quelle con data passata rispetto alla data di oggi non verranno mostrate nel front-end
     public List<PrenotazioneDTO> getAllPrenotazioni() {
         LocalDateTime now = LocalDateTime.now();
         List<Prenotazione> prenotazioni = prenotazioneRepository.findByDataOraAfter(now);
@@ -182,9 +177,9 @@ public class PrenotazioneService {
             String contenuto = "Ciao " + utenteLoggato.getNome() + ",\n\n"
                     + "La tua prenotazione per il servizio '" + prenotazione.getServizio().getNomeServizio() + " prevista per il " +dataFormattata  + " alle: " + prenotazione.getDataOra().toLocalTime() + " è stata cancellata con successo.\n\n"
                     + "Se la cancellazione è avvenuta per errore o desideri prenotare un nuovo appuntamento,\n"
-                    + "puoi farlo direttamente accedendo alla tua area personale o contattandoci.\n\n"
+                    + "puoi farlo direttamente accedendo alla tua area personale o contattandomi.\n\n"
                     + "Grazie!\n"
-                    + "A presto, cordiali saluti,\nDott.Alessandro";
+                    + "A presto, cordiali saluti,\n\nDott.Alessandro";
 
             MailModel mailModel = new MailModel();
             mailModel.setDestinatario(destinatario);
@@ -200,7 +195,7 @@ public class PrenotazioneService {
     }
 
     public PrenotazioneDTO modificaPrenotazione(Long id, PrenotazioneDTO prenotazioneDTO) throws AccessDeniedException {
-        //Recupero la prenotazione nel db
+        //recupero la prenotazione nel db
         Prenotazione prenotazione = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Prenotazione non trovata "));
 
@@ -209,7 +204,7 @@ public class PrenotazioneService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Utente utenteLoggato = userDetails.getUser();
 
-        // Controllo per vedere se la prenotazione appartiene all'utente loggato
+        // controllo per vedere se la prenotazione appartiene all'utente loggato
         if (prenotazione.getUtente().getId().equals(utenteLoggato.getId()) || utenteLoggato.getRuolo().name().equals("ADMIN") || utenteLoggato.getRuolo().name().equals("PERSONAL_TRAINER")) {
 
             // ---------- PER MODIFICARE LA DATA DI UNA PRENOTAZIONE BISOGNA INSERIRE ANCHE L'ID DEL SERVIZIO ----------
@@ -295,10 +290,10 @@ public class PrenotazioneService {
                     + "Dettagli aggiornati:\n\n"
                     + "📅 Data: " + dataFormattata + "\n"
                     + "🕒 Orario: " + prenotazione.getDataOra().toLocalTime() + "\n"
-                    + "⌛ Durata: " + prenotazione.getServizio().getDurata() + " minuti\n\n"
+                    + "⌛ Durata: " + prenotazione.getServizio().getDurata() + " minuti\n"
                     + (prenotazione.getNote() != null ? "📝 Note: " + prenotazione.getNote() + "\n\n" : "")
                     + "Grazie!\n"
-                    + "A presto, cordiali saluti,\nDott.Alessandro";
+                    + "A presto, cordiali saluti,\n\nDott.Alessandro";
 
             MailModel mailModel = new MailModel();
             mailModel.setDestinatario(destinatario);
@@ -316,12 +311,13 @@ public class PrenotazioneService {
 
     }
 
-    // Tutte le prenotazioni di un cliente
+    //tutte le prenotazioni di un cliente
     public List<PrenotazioneDTO> getPrenotazioniByUtente(Long utenteId) {
         Utente utente = utenteRepository.findById(utenteId)
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato! "));
 
-        List<Prenotazione> prenotazioni = prenotazioneRepository.findByUtente(utente);
+        LocalDateTime now = LocalDateTime.now();
+        List<Prenotazione> prenotazioni = prenotazioneRepository.findByDataOraAfterAndUtente(now, utente);
         return prenotazioni.stream()
                 .map(prenotazioneMapperDTO::toDto)
                 .collect(Collectors.toList());
@@ -357,7 +353,7 @@ public class PrenotazioneService {
             }
         }
 
-        // Generiamo gli orari disponibili
+        // Tutti gli orari disponibili
         LocalTime orarioCorrente = inizioOrario;
         while (orarioCorrente.plusMinutes(durataServizio).isBefore(fineOrario) ||
                 orarioCorrente.plusMinutes(durataServizio).equals(fineOrario)) {
@@ -383,17 +379,13 @@ public class PrenotazioneService {
     }
 
 
-
-
-
-
     // Metodo per verificare la sovrapposizione delle date e ore
     private boolean isSovrapposizione(LocalDateTime start, LocalDateTime end, Long prenotazioneId) {
         List<Prenotazione> prenotazioniEsistenti = prenotazioneRepository.findAll();
 
         // Controllo per vedere se la nuova prenotazione si sovrappone a quelle esistenti
         //In caso di modifica non tiene conto di quella che stiamo modificando
-        //in caso di creazione non c'è nessuun id
+        //in caso di creazione non c'è nessun id quindi prenotazioneId = null
         for (Prenotazione prenotazione : prenotazioniEsistenti) {
             //In caso di modifica non tiene conto di quella che stiamo modificando
             //in caso di creazione non c'è nessuun id quindi salta questo if e controlla direttamente quelle esistenti
@@ -406,7 +398,7 @@ public class PrenotazioneService {
 
             // Controllo per vedere se l'intervallo di tempo della nuova prenotazione si sovrappone con uno esistente
             if (start.isBefore(fineEsistente) && end.isAfter(inizioEsistente)) {
-                return true; // sovrapposizione
+                return true; // c'è una sovrapposizione
             }
         }
         return false; // Nessuna sovrapposizione

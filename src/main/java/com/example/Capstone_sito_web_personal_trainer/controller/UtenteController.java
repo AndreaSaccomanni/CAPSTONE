@@ -76,6 +76,7 @@ public class UtenteController {
                 dettagliUtente.getId(),
                 dettagliUtente.getEmail(),
                 ruoloWeb,  // ← RUOLO SINGOLO
+                dettagliUtente.getNome(),
                 token
         );
 

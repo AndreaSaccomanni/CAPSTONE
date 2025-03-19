@@ -14,16 +14,17 @@ public class JwtResponse {
     private Long id;
     private String email;
     private String ruolo;
-
+    private String nome;
     private String token;
     private String type = "Bearer ";
 
 
-    public JwtResponse(String username, Long id, String email, String ruolo, String token) {
+    public JwtResponse(String username, Long id, String email, String ruolo, String nome, String token) {
         this.username = username;
         this.id = id;
         this.email = email;
         this.ruolo = ruolo;
+        this.nome = nome;
         this.token = token;
     }
 }

@@ -22,6 +22,8 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Long
     //seleziona solamente le prenotazioni future senza tenere conto di quelle passate
     List<Prenotazione> findByDataOraAfter(LocalDateTime now);
 
+    List<Prenotazione> findByDataOraAfterAndUtente(LocalDateTime now, Utente utente);
+
 
 
 }

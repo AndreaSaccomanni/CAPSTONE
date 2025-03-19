@@ -77,6 +77,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/prenotazioni/update/**").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/prenotazioni/delete/**").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/prenotazioni/utente/**").hasAnyAuthority( "USER","ADMIN", "PERSONAL_TRAINER")
+                        .requestMatchers("/prenotazioni/orariDisponibili").hasAnyAuthority( "USER","ADMIN", "PERSONAL_TRAINER")
 
                         .requestMatchers("/prenotazioni/all").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
 

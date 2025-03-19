@@ -14,6 +14,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UtenteDTO {
 
+
+    private Long id;
+
     @NotBlank(message = "Il campo 'nome' non può essere vuoto")
     private String nome;
 
