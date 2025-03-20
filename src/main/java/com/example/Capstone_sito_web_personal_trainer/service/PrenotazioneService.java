@@ -343,13 +343,17 @@ public class PrenotazioneService {
         // Tutti gli orari occupati
         Set<LocalTime> orariOccupati = new HashSet<>();
         for (Prenotazione p : prenotazioni) {
-            LocalTime inizioOccupato = p.getDataOra().toLocalTime();
-            int durata = p.getServizio().getDurata();
-            LocalTime fineOccupato = inizioOccupato.plusMinutes(durata);
+            LocalTime inizioOccupato = p.getDataOra().toLocalTime(); //ricavo orario inizio prenotazione
+            int durata = p.getServizio().getDurata(); //ricavo durata preotazione
+            LocalTime fineOccupato = inizioOccupato.plusMinutes(durata);//ricavo orario fine prenotazione
 
             while (inizioOccupato.isBefore(fineOccupato)) {
+                //tutti gli intervalli, di 15min in 15min tra l'inizio e la fine della prenotazione verranno aggiunti al set di orariOccupati
+                //non verranno mostrati tra i disponibili e in quelgli orari n on sarà possibile fare una prenotazione
+                //ES inizio 10:00 fine 10:30 ---> 10:00 - 10:15 - 10:30 non saranno disponibili il prossimo disponiibile sarà 10:45
                 orariOccupati.add(inizioOccupato);
-                inizioOccupato = inizioOccupato.plusMinutes(15); //Mostra gli orari disponibili ogni 15 minnuti --> 9:00 - 9:15 - 9:30 ecc.
+                inizioOccupato = inizioOccupato.plusMinutes(15);
+
             }
         }
 
@@ -361,17 +365,18 @@ public class PrenotazioneService {
             boolean occupato = false;
 
             // Controllo per vedere se tutti gli slot necessari per la durata del servizio sono disponibili
+            //sempre con un intervallo di 15 min se quell'orario è presente nella lista degli orariOccupati non lo aggiunge
             for (int i = 0; i < durataServizio / 15; i++) {
                 if (orariOccupati.contains(orarioCorrente.plusMinutes(i * 15))) {
                     occupato = true;
                     break;
                 }
             }
-
+            // altrimenti lo aggiunge alla lista degli orari disponibili
             if (!occupato) {
                 orariDisponibili.add(LocalDateTime.of(data, orarioCorrente));
             }
-
+            //aggiungo semrpre 15 min per avere gli orari disponibili di 15 in 15
             orarioCorrente = orarioCorrente.plusMinutes(15);
         }
 
