@@ -19,7 +19,10 @@ public class PrenotazioneDTO {
     private LocalDateTime dataOraPrenotazione;
     private String note;
 
+    private Long indirizzoId;
+
     private String nomeServizio;
     private String nomeUtente;
     private String cognomeUtente;
+    private String indirizzo;
 }

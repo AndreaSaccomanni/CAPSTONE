@@ -28,6 +28,10 @@ public class Prenotazione {
     @JoinColumn(name = "servizio_id", nullable = false)
     private Servizio servizio;
 
+    @ManyToOne
+    @JoinColumn(name = "indirizzo_id", nullable = false)
+    private Indirizzo indirizzo;
+
     private String note;
 }
 
