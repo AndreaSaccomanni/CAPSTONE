@@ -71,6 +71,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/utenti/login").permitAll()
                         .requestMatchers("/mail/sendMail").permitAll()
                         .requestMatchers("/servizi/**").permitAll()
+                        .requestMatchers("/indirizzi/**").permitAll()
 
                         .requestMatchers("/error").permitAll()
 
@@ -86,7 +87,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/utenti/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/utenti/delete/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/utenti/update/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
-                        .requestMatchers("/indirizzi/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
+
 
 
                         // Permessi per ADMIN ---> può fare tutto

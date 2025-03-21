@@ -16,9 +16,10 @@ public class Indirizzo {
     private Long id;
 
     private String via;
-    private int numeroCivico;
+    private String numeroCivico;
     private String citta;
     private String provincia;
     private Double latitudine;
     private Double longitudine;
+    private String nomeStudio;
 }

@@ -37,6 +37,7 @@ public class IndirizzoService {
         indirizzo.setProvincia(nuovoIndirizzo.getProvincia());
         indirizzo.setLatitudine(nuovoIndirizzo.getLatitudine());
         indirizzo.setLongitudine(nuovoIndirizzo.getLongitudine());
+        indirizzo.setNomeStudio(nuovoIndirizzo.getNomeStudio());
         return indirizzoRepository.save(indirizzo);
     }
 
