@@ -1,5 +1,6 @@
 package com.example.Capstone_sito_web_personal_trainer.service;
 
+import com.example.Capstone_sito_web_personal_trainer.entities.MailModel;
 import com.example.Capstone_sito_web_personal_trainer.entities.Utente;
 import com.example.Capstone_sito_web_personal_trainer.enumeration.UserRole;
 import com.example.Capstone_sito_web_personal_trainer.exception.EmailDuplicateException;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,9 @@ public class UtenteService {
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
 
+    @Autowired
+    MailService mailService;
+
     public UtenteDTO registraUtente(UtenteDTO utenteDTO) throws InterruptedException{
 
         checkDuplicateKey(utenteDTO.getUsername(), utenteDTO.getEmail());
@@ -42,6 +47,31 @@ public class UtenteService {
         }
 
         utenteRepository.save(utente);
+
+
+
+        // Preparazione e invio della mail
+        String destinatario = utente.getEmail();
+        String oggetto = "Registrazione avvenuta con successo" ;
+
+        String contenuto = "Ciao " + utente.getNome() + ",\n\n"
+                + "La registrazione al mio sito personale è avvenuta  con successo!\n\n"
+                + "Ora potrai effetturare prenotazioni per i seguenti servizi:\n\n"
+                + "🎗️ CONSULENZA INIZIALE: Durante il primo incontro analizziamo insieme il tuo stato fisico attuale, i tuoi obiettivi e le tue abitudini di allenamento"  + "\n"
+                + "💆‍♂️ MASSAGGIO RILASSANTE: Un massaggio della durata di un'ora che aiuta a sciogliere le tensioni accumulate e favorisce un senso di benessere generale" + "\n"
+                + "🏃 MASSAGGIO DECONTRATTURANTE: Un massaggio che aiuta a eliminare l'acido lattico e migliora la circolazione per un recupero più rapido dopo l'allenamento." + "\n\n"
+                + "Se hai bisogno di altre informazioni non esitare a contattarmi:\n"
+                + "📞 3772082714\n"
+                + "📩 alessandrosaccomanni.pt@gmail.com\n\n"
+                + "Grazie!\n"
+                + "A presto, cordiali saluti,\n\nDott.Alessandro";
+
+        MailModel mailModel = new MailModel();
+        mailModel.setDestinatario(destinatario);
+        mailModel.setOggetto(oggetto);
+        mailModel.setContenuto(contenuto);
+
+        mailService.inviaEmail(mailModel);
 
         // Mapper from utente to dto
         return utenteMapperDTO.toDto(utente);

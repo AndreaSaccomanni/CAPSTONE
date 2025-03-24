@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CreaPrenotazioneRequest {
 
+    private Long utenteId;
     private Long servizioId;
     private LocalDateTime dataOraPrenotazione;
     private String note;

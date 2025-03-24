@@ -24,10 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,6 +55,17 @@ public class PrenotazioneService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Utente utenteLoggato = userDetails.getUser();
+
+        // Per creare una prenotazione per un utente normale quando mi loggo come ADMIN o PERSONAL_TRAINER
+        //controllo ruolo e tramite l'id dell'utente selezionato, recupera i dati di quell'utente e non dell'admin
+        Utente utentePrenotazione;
+        if ((utenteLoggato.getRuolo().name().equals("ADMIN") || utenteLoggato.getRuolo().name().equals("PERSONAL_TRAINER"))
+                && prenotazioneDTO.getUtenteId() != null) {
+            utentePrenotazione = utenteRepository.findById(prenotazioneDTO.getUtenteId())
+                    .orElseThrow(() -> new EntityNotFoundException("Utente per la prenotazione non trovato!"));
+        } else {
+            utentePrenotazione = utenteLoggato;
+        }
 
         LocalDateTime dataOraPrenotazione = prenotazioneDTO.getDataOraPrenotazione();
         int durata = servizio.getDurata(); // Durata in minuti
@@ -101,7 +109,7 @@ public class PrenotazioneService {
 
         // Creo la nuova prenotazione
         Prenotazione prenotazione = prenotazioneMapperDTO.requestToEntity(prenotazioneDTO);
-        prenotazione.setUtente(utenteLoggato);
+        prenotazione.setUtente(utentePrenotazione);
         prenotazione.setServizio(servizio);
         prenotazione.setDataOra(dataOraPrenotazione);
 
@@ -111,16 +119,16 @@ public class PrenotazioneService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         String dataFormattata = dataOraPrenotazione.format(formatter);
-        String destinatario = utenteLoggato.getEmail();
+        String destinatario = utentePrenotazione.getEmail();
         String oggetto = "Conferma Prenotazione - " + servizio.getNomeServizio();
 
-        String contenuto = "Ciao " + utenteLoggato.getNome() + ",\n\n"
+        String contenuto = "Ciao " + utentePrenotazione.getNome() + ",\n\n"
                 + "La tua prenotazione per il servizio '" + servizio.getNomeServizio() + "' è stata confermata.\n\n"
                 + "Dettagli:\n\n"
                 + "📅 Data: " + dataFormattata+ "\n"
                 + "🕒 Orario: " + dataOraPrenotazione.toLocalTime() + "\n"
                 + "⌛ Durata: " + durata + " minuti\n"
-                + (prenotazione.getNote() != null ? "📝 Note: " + prenotazione.getNote() + "\n\n" : "")
+                + (!Objects.equals(prenotazione.getNote(), "") ? "📝 Note: " + prenotazione.getNote() + "\n\n" : "\n\n") // se non vengono aggiunte note non viene mostrato niente
                 + "Grazie!\n"
                 + "A presto, cordiali saluti,\n\nDott.Alessandro";
 
@@ -159,6 +167,8 @@ public class PrenotazioneService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Utente utenteLoggato = userDetails.getUser();
 
+
+
         // Trovo la prenotazione
         Prenotazione prenotazione = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Prenotazione non trovata ️ ️"));
@@ -171,10 +181,10 @@ public class PrenotazioneService {
             String dataFormattata = prenotazione.getDataOra().format(formatter);
 
             // Preparazione e invio della mail
-            String destinatario = utenteLoggato.getEmail();
+            String destinatario = prenotazione.getUtente().getEmail();
             String oggetto = "Cancellazione Prenotazione - " + prenotazione.getServizio().getNomeServizio();
 
-            String contenuto = "Ciao " + utenteLoggato.getNome() + ",\n\n"
+            String contenuto = "Ciao " + prenotazione.getUtente().getNome() + ",\n\n"
                     + "La tua prenotazione per il servizio '" + prenotazione.getServizio().getNomeServizio() + " prevista per il " +dataFormattata  + " alle: " + prenotazione.getDataOra().toLocalTime() + " è stata cancellata con successo.\n\n"
                     + "Se la cancellazione è avvenuta per errore o desideri prenotare un nuovo appuntamento,\n"
                     + "puoi farlo direttamente accedendo alla tua area personale o contattandomi.\n\n"
@@ -282,10 +292,10 @@ public class PrenotazioneService {
             String dataFormattata = prenotazione.getDataOra().format(formatter);
 
             // Preparazione e invio della mail
-            String destinatario = utenteLoggato.getEmail();
+            String destinatario = prenotazione.getUtente().getEmail();
             String oggetto = "Aggiornamento Prenotazione - " + prenotazione.getServizio().getNomeServizio();
 
-            String contenuto = "Ciao " + utenteLoggato.getNome() + ",\n\n"
+            String contenuto = "Ciao " + prenotazione.getUtente().getNome() + ",\n\n"
                     + "La tua prenotazione per il servizio '" + prenotazione.getServizio().getNomeServizio() + "' è stata aggiornata.\n\n"
                     + "Dettagli aggiornati:\n\n"
                     + "📅 Data: " + dataFormattata + "\n"
