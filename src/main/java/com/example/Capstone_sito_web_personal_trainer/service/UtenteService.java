@@ -55,7 +55,7 @@ public class UtenteService {
         String oggetto = "Registrazione avvenuta con successo" ;
 
         String contenuto = "Ciao " + utente.getNome() + ",\n\n"
-                + "La registrazione al mio sito personale è avvenuta  con successo!\n\n"
+                + "La registrazione è avvenuta  con successo!\n\n"
                 + "Ora potrai effetturare prenotazioni per i seguenti servizi:\n\n"
                 + "🎗️ CONSULENZA INIZIALE: Durante il primo incontro analizziamo insieme il tuo stato fisico attuale, i tuoi obiettivi e le tue abitudini di allenamento"  + "\n"
                 + "💆‍♂️ MASSAGGIO RILASSANTE: Un massaggio della durata di un'ora che aiuta a sciogliere le tensioni accumulate e favorisce un senso di benessere generale" + "\n"
