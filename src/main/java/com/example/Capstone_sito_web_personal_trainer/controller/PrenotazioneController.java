@@ -1,8 +1,13 @@
 package com.example.Capstone_sito_web_personal_trainer.controller;
 
+import com.example.Capstone_sito_web_personal_trainer.entities.Indirizzo;
+import com.example.Capstone_sito_web_personal_trainer.entities.Prenotazione;
 import com.example.Capstone_sito_web_personal_trainer.payload.PrenotazioneDTO;
 import com.example.Capstone_sito_web_personal_trainer.payload.request.CreaPrenotazioneRequest;
+import com.example.Capstone_sito_web_personal_trainer.repositories.IndirizzoRepository;
+import com.example.Capstone_sito_web_personal_trainer.repositories.PrenotazioneRepository;
 import com.example.Capstone_sito_web_personal_trainer.service.PrenotazioneService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -20,6 +25,8 @@ public class PrenotazioneController {
 
     @Autowired
     PrenotazioneService prenotazioneService;
+
+
 
     //nuova prenotazione
     @PostMapping("/new")
@@ -69,5 +76,10 @@ public class PrenotazioneController {
             @RequestParam("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
             @RequestParam("servizioId") Long servizioId) {
         return ResponseEntity.ok(prenotazioneService.getOrariDisponibili(data, servizioId));
+    }
+
+    @GetMapping("/indirizzo/{id}")
+    public List<Prenotazione> getByIndirizzo(@PathVariable Long id) {
+        return prenotazioneService.getPrenotazioniByIndirizzo(id);
     }
 }

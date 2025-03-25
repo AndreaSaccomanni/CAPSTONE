@@ -1,13 +1,11 @@
 package com.example.Capstone_sito_web_personal_trainer.service;
 
-import com.example.Capstone_sito_web_personal_trainer.entities.MailModel;
-import com.example.Capstone_sito_web_personal_trainer.entities.Prenotazione;
-import com.example.Capstone_sito_web_personal_trainer.entities.Utente;
-import com.example.Capstone_sito_web_personal_trainer.entities.Servizio;
+import com.example.Capstone_sito_web_personal_trainer.entities.*;
 import com.example.Capstone_sito_web_personal_trainer.exception.ClosedException;
 import com.example.Capstone_sito_web_personal_trainer.payload.PrenotazioneDTO;
 import com.example.Capstone_sito_web_personal_trainer.payload.mapper.PrenotazioneMapperDTO;
 import com.example.Capstone_sito_web_personal_trainer.payload.request.CreaPrenotazioneRequest;
+import com.example.Capstone_sito_web_personal_trainer.repositories.IndirizzoRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.PrenotazioneRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.UtenteRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.ServizioRepository;
@@ -44,6 +42,9 @@ public class PrenotazioneService {
 
     @Autowired
     MailService mailService;
+
+    @Autowired
+    IndirizzoRepository indirizzoRepository;
 
 
     public PrenotazioneDTO creaPrenotazione(CreaPrenotazioneRequest prenotazioneDTO) {
@@ -128,6 +129,7 @@ public class PrenotazioneService {
                 + "📅 Data: " + dataFormattata+ "\n"
                 + "🕒 Orario: " + dataOraPrenotazione.toLocalTime() + "\n"
                 + "⌛ Durata: " + durata + " minuti\n"
+                + "📍 Indirizzo: " + prenotazione.getIndirizzo().getCitta() +",  "+ prenotazione.getIndirizzo().getVia() + " " + prenotazione.getIndirizzo().getNumeroCivico() +  " - " + prenotazione.getIndirizzo().getNomeStudio() + "\n"
                 + (!Objects.equals(prenotazione.getNote(), "") ? "📝 Note: " + prenotazione.getNote() + "\n\n" : "\n\n") // se non vengono aggiunte note non viene mostrato niente
                 + "Grazie!\n"
                 + "A presto, cordiali saluti,\n\nDott.Alessandro";
@@ -185,7 +187,7 @@ public class PrenotazioneService {
             String oggetto = "Cancellazione Prenotazione - " + prenotazione.getServizio().getNomeServizio();
 
             String contenuto = "Ciao " + prenotazione.getUtente().getNome() + ",\n\n"
-                    + "La tua prenotazione per il servizio '" + prenotazione.getServizio().getNomeServizio() + " prevista per il " +dataFormattata  + " alle: " + prenotazione.getDataOra().toLocalTime() + " è stata cancellata con successo.\n\n"
+                    + "La tua prenotazione per il servizio '" + prenotazione.getServizio().getNomeServizio() + " prevista per il " +dataFormattata  + " alle: " + prenotazione.getDataOra().toLocalTime() + " a " +prenotazione.getIndirizzo().getCitta() + ", " + prenotazione.getIndirizzo().getVia()+ " " +prenotazione.getIndirizzo().getNumeroCivico() + " - " + prenotazione.getIndirizzo().getNomeStudio() +" è stata cancellata con successo.\n\n"
                     + "Se la cancellazione è avvenuta per errore o desideri prenotare un nuovo appuntamento,\n"
                     + "puoi farlo direttamente accedendo alla tua area personale o contattandomi.\n\n"
                     + "Grazie!\n"
@@ -285,6 +287,12 @@ public class PrenotazioneService {
                 prenotazione.setNote(prenotazioneDTO.getNote());
             }
 
+            //se viene forinto un nuovo indirizzo, aggiorna
+            if(prenotazioneDTO.getIndirizzoId() != null){
+                Indirizzo indirizzo = indirizzoRepository.findById(prenotazioneDTO.getIndirizzoId()).orElseThrow(() -> new EntityNotFoundException("Indirizzo non trovato"));
+                prenotazione.setIndirizzo(indirizzo);
+            }
+
             // Salvo la prenotazione aggiornata
             prenotazione = prenotazioneRepository.save(prenotazione);
 
@@ -301,6 +309,7 @@ public class PrenotazioneService {
                     + "📅 Data: " + dataFormattata + "\n"
                     + "🕒 Orario: " + prenotazione.getDataOra().toLocalTime() + "\n"
                     + "⌛ Durata: " + prenotazione.getServizio().getDurata() + " minuti\n"
+                    + "📍 Indirizzo: " + prenotazione.getIndirizzo().getCitta() +",  "+ prenotazione.getIndirizzo().getVia() + " " + prenotazione.getIndirizzo().getNumeroCivico() +  " - " + prenotazione.getIndirizzo().getNomeStudio() + "\n"
                     + (prenotazione.getNote() != null ? "📝 Note: " + prenotazione.getNote() + "\n\n" : "")
                     + "Grazie!\n"
                     + "A presto, cordiali saluti,\n\nDott.Alessandro";
@@ -315,7 +324,7 @@ public class PrenotazioneService {
             return prenotazioneMapperDTO.toDto(prenotazione);
 
         } else {
-            throw new AccessDeniedException("Non puoi cancellare questa prenotazione ");
+            throw new AccessDeniedException("Non puoi modificare questa prenotazione ");
         }
 
 
@@ -419,5 +428,10 @@ public class PrenotazioneService {
         return false; // Nessuna sovrapposizione
     }
 
+    public List<Prenotazione> getPrenotazioniByIndirizzo(Long indirizzoId) {
+        Indirizzo indirizzo = indirizzoRepository.findById(indirizzoId)
+                .orElseThrow(() -> new EntityNotFoundException("Indirizzo non trovato"));
+        return prenotazioneRepository.findByIndirizzo(indirizzo);
+    }
 
 }

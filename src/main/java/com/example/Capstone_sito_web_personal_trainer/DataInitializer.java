@@ -2,7 +2,6 @@ package com.example.Capstone_sito_web_personal_trainer;
 
 
 import com.example.Capstone_sito_web_personal_trainer.entities.Ruolo;
-import com.example.Capstone_sito_web_personal_trainer.entities.Utente;
 import com.example.Capstone_sito_web_personal_trainer.enumeration.TipoConsulenza;
 import com.example.Capstone_sito_web_personal_trainer.enumeration.TipoMassaggio;
 import com.example.Capstone_sito_web_personal_trainer.enumeration.UserRole;
@@ -18,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -80,33 +77,6 @@ public class DataInitializer implements CommandLineRunner {
             ConsulenzaDTO consulenza2DTO = new ConsulenzaDTO();
             consulenza2DTO.setTipoConsulenza(TipoConsulenza.MIGLIORAMENTO_SCHEDA);
             consulenzaService.creaConsulenza(consulenza2DTO);
-        }
-
-        if(utenteRepository.count() == 0){
-            Ruolo ruoloAdmin = ruoloRepository.findByName(UserRole.ADMIN);
-
-            Utente admin = new Utente();
-            admin.setNome("Andrea");
-            admin.setCognome("Saccomanni");
-            admin.setUsername("AndreaSaccomanni");
-            admin.setEmail("andrea.saccomanni@gmail.com");
-            admin.setPassword(passwordEncoder.encode("password"));
-            admin.setRuolo(ruoloAdmin.getName());
-            admin.setDataDiNascita(LocalDate.of(1997,7,19));
-            utenteRepository.save(admin);
-
-            Ruolo ruoloPersonal = ruoloRepository.findByName(UserRole.PERSONAL_TRAINER);
-            Utente personalTrainer = new Utente();
-            personalTrainer.setNome("Alessandro");
-            personalTrainer.setCognome("Saccomanni");
-            personalTrainer.setUsername("aleSaccomanni");
-            personalTrainer.setEmail("alesaccomanni@gmail.com");
-            personalTrainer.setPassword(passwordEncoder.encode("password"));
-            personalTrainer.setRuolo(ruoloPersonal.getName());
-            personalTrainer.setDataDiNascita(LocalDate.of(1999,10,28));
-
-            utenteRepository.save(personalTrainer);
-
         }
 
 

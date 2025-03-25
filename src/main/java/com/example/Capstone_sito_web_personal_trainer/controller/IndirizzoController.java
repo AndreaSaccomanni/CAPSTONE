@@ -36,7 +36,7 @@ public class IndirizzoController {
 
     @PutMapping("/update/{id}")
     public  ResponseEntity<?> updateIndirizzo(@PathVariable Long id,  @RequestBody Indirizzo nuovoIndirizzo){
-        Indirizzo indirizzo = indirizzoService.updateIndirizzo(id, nuovoIndirizzo);
+        indirizzoService.updateIndirizzo(id, nuovoIndirizzo);
         return  ResponseEntity.status(HttpStatus.OK).body(nuovoIndirizzo);
 
     }
