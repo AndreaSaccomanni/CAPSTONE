@@ -33,5 +33,7 @@ public class Prenotazione {
     private Indirizzo indirizzo;
 
     private String note;
+
+    
 }
 

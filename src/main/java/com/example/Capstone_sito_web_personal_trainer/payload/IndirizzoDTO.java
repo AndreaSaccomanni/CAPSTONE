@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -25,4 +27,6 @@ public class IndirizzoDTO {
     private Double longitudine;
     @NotNull
     private String nomeStudio;
+
+    private List<String> giorniDisponibili;
 }

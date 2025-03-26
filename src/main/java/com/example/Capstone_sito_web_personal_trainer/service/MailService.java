@@ -1,13 +1,13 @@
 package com.example.Capstone_sito_web_personal_trainer.service;
 
 import com.example.Capstone_sito_web_personal_trainer.entities.MailModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class MailService {
@@ -22,13 +22,14 @@ public class MailService {
 
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setFrom("alessandrosaccomanni.pt@gmail.com");
+//        message.setFrom("alessandrosaccomanni.pt@gmail.com");
 
         message.setTo(mailModel.getDestinatario());
 
         message.setSubject(mailModel.getOggetto());
 
         message.setText(mailModel.getContenuto());
+
 
         try {
             mailSender.send(message);
@@ -39,7 +40,7 @@ public class MailService {
         } catch (MailException e) {
 
             logger.error("Errore nell'invio della mail: {}", e.getMessage());
-            return " ❌ Errore nell'invio della mail";
+            return "Errore nell'invio della mail";
 
         }
     }
