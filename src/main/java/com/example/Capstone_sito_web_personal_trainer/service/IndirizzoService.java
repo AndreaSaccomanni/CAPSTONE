@@ -3,6 +3,8 @@ package com.example.Capstone_sito_web_personal_trainer.service;
 import com.example.Capstone_sito_web_personal_trainer.entities.Indirizzo;
 import com.example.Capstone_sito_web_personal_trainer.entities.Prenotazione;
 //import com.example.Capstone_sito_web_personal_trainer.enumeration.GiorniDisponibili;
+import com.example.Capstone_sito_web_personal_trainer.payload.IndirizzoDTO;
+import com.example.Capstone_sito_web_personal_trainer.payload.mapper.IndirizzoMappperDTO;
 import com.example.Capstone_sito_web_personal_trainer.repositories.IndirizzoRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.PrenotazioneRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -22,33 +25,34 @@ public class IndirizzoService {
 
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
+    @Autowired
+    IndirizzoMappperDTO indirizzoMapperDTO;
 
-    public List<Indirizzo> getAllIndirizzi(){
-        return indirizzoRepository.findAll();
+    public List<IndirizzoDTO> getAllIndirizzi(){
+        return indirizzoRepository.findAll().stream().map(indirizzoMapperDTO::toDTO).collect(Collectors.toList());
 
     }
 
-    public Indirizzo getIndirizzoById(Long id){
-        return indirizzoRepository.findById(id).orElseThrow(() -> new RuntimeException("Indirizzo non trovato"));
+    public IndirizzoDTO getIndirizzoById(Long id){
+        Indirizzo indirizzo = indirizzoRepository.findById(id).orElseThrow(() -> new RuntimeException("Indirizzo non trovato"));
+        return indirizzoMapperDTO.toDTO(indirizzo);
     }
 
-    public Indirizzo addIndirizzo(Indirizzo indirizzo){
+    public IndirizzoDTO addIndirizzo(IndirizzoDTO indirizzoDto){
 //        rimuoviGiorniGiaAssegnati(indirizzo.getGiorniDisponibili(), null);// null perchè non ha ancora l'id essendo un nuovo indirizzo
-        return indirizzoRepository.save(indirizzo);
+
+        Indirizzo nuovoIndirizzo = indirizzoMapperDTO.toEntity(indirizzoDto);
+        indirizzoRepository.save(nuovoIndirizzo);
+        return indirizzoMapperDTO.toDTO(nuovoIndirizzo);
     }
 
-    public Indirizzo updateIndirizzo(Long id, Indirizzo nuovoIndirizzo) {
+    public IndirizzoDTO updateIndirizzo(Long id, IndirizzoDTO indirizzoDto) {
 //        rimuoviGiorniGiaAssegnati(nuovoIndirizzo.getGiorniDisponibili(), id);//non prende in consideraizione l'inndirizzo da aggiornare
-        Indirizzo indirizzo = getIndirizzoById(id);
-        indirizzo.setVia(nuovoIndirizzo.getVia());
-        indirizzo.setNumeroCivico(nuovoIndirizzo.getNumeroCivico());
-        indirizzo.setCitta(nuovoIndirizzo.getCitta());
-        indirizzo.setProvincia(nuovoIndirizzo.getProvincia());
-        indirizzo.setLatitudine(nuovoIndirizzo.getLatitudine());
-        indirizzo.setLongitudine(nuovoIndirizzo.getLongitudine());
-        indirizzo.setNomeStudio(nuovoIndirizzo.getNomeStudio());
+        Indirizzo indirizzo = indirizzoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Indirizzo non trovato"));
+        indirizzoMapperDTO.updateIndirizzo(indirizzoDto, indirizzo);
+        indirizzoRepository.save(indirizzo);
 
-        return indirizzoRepository.save(indirizzo);
+        return indirizzoMapperDTO.toDTO(indirizzo);
     }
 
     public void deleteIndirizzo(Long id) {

@@ -27,7 +27,6 @@ public class Indirizzo {
     private Double latitudine;
     private Double longitudine;
     private String nomeStudio;
-//    @ElementCollection(fetch = FetchType.EAGER)
 //    @Enumerated(EnumType.STRING)
 //    private List<GiorniDisponibili> giorniDisponibili = new ArrayList<>();
 

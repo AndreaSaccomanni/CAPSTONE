@@ -21,6 +21,8 @@ public class PrenotazioneMapperDTO {
 
     @Autowired
     IndirizzoRepository indirizzoRepository;
+    @Autowired
+    IndirizzoMappperDTO indirizzoMapper;
 
     public PrenotazioneDTO toDto(Prenotazione entity) {
         PrenotazioneDTO dto = new PrenotazioneDTO();
@@ -28,9 +30,7 @@ public class PrenotazioneMapperDTO {
         dto.setUtenteId(entity.getUtente().getId());
         dto.setServizioId(entity.getServizio().getId());
         dto.setIndirizzoId(entity.getIndirizzo().getId());
-        dto.setIndirizzo(entity.getIndirizzo().getVia() + " " +
-                entity.getIndirizzo().getNumeroCivico() + ", " +
-                entity.getIndirizzo().getCitta());
+        dto.setIndirizzo(indirizzoMapper.toDTO(entity.getIndirizzo()));
         dto.setDataOraPrenotazione(entity.getDataOra());
         dto.setNote(entity.getNote());
         dto.setNomeUtente(entity.getUtente().getNome());

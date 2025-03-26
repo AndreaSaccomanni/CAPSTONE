@@ -24,5 +24,5 @@ public class PrenotazioneDTO {
     private String nomeServizio;
     private String nomeUtente;
     private String cognomeUtente;
-    private String indirizzo;
+    private IndirizzoDTO indirizzo;
 }
