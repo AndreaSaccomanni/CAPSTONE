@@ -64,8 +64,11 @@ public class IndirizzoService {
         // elimina prima le prenotazioni
         if (!prenotazioniCollegate.isEmpty()) {
 
+
             prenotazioneRepository.deleteAll(prenotazioniCollegate);
         }
+        indirizzo.setGiorniDisponibili("");
+        indirizzoRepository.save(indirizzo);
         // poi l'indirizzo
         indirizzoRepository.deleteById(id);
     }
