@@ -7,8 +7,8 @@ import com.example.Capstone_sito_web_personal_trainer.payload.mapper.Prenotazion
 import com.example.Capstone_sito_web_personal_trainer.payload.request.CreaPrenotazioneRequest;
 import com.example.Capstone_sito_web_personal_trainer.repositories.IndirizzoRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.PrenotazioneRepository;
-import com.example.Capstone_sito_web_personal_trainer.repositories.UtenteRepository;
 import com.example.Capstone_sito_web_personal_trainer.repositories.ServizioRepository;
+import com.example.Capstone_sito_web_personal_trainer.repositories.UtenteRepository;
 import com.example.Capstone_sito_web_personal_trainer.security.services.UserDetailsImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,23 +29,17 @@ import java.util.stream.Collectors;
 public class PrenotazioneService {
 
     @Autowired
-    private PrenotazioneRepository prenotazioneRepository;
-
-    @Autowired
-    private UtenteRepository utenteRepository;
-
-    @Autowired
-    private ServizioRepository servizioRepository;
-
-    @Autowired
-    private PrenotazioneMapperDTO prenotazioneMapperDTO;
-
-    @Autowired
     MailService mailService;
-
     @Autowired
     IndirizzoRepository indirizzoRepository;
-
+    @Autowired
+    private PrenotazioneRepository prenotazioneRepository;
+    @Autowired
+    private UtenteRepository utenteRepository;
+    @Autowired
+    private ServizioRepository servizioRepository;
+    @Autowired
+    private PrenotazioneMapperDTO prenotazioneMapperDTO;
 
     public PrenotazioneDTO creaPrenotazione(CreaPrenotazioneRequest prenotazioneDTO) {
         // Recupero il servizio
@@ -93,7 +87,7 @@ public class PrenotazioneService {
         }
 
         //ORARIO APERTURA STUDIO ORE 9:00, non si possono prendere appunntamenti ceh iniziano prima
-        if(oraInizio.isBefore(LocalTime.of(9, 0)) ){
+        if (oraInizio.isBefore(LocalTime.of(9, 0))) {
             throw new IllegalArgumentException(" Non è possibile prenotare appuntamenti prima delle 9:00");
         }
 
@@ -126,10 +120,10 @@ public class PrenotazioneService {
         String contenuto = "Ciao " + utentePrenotazione.getNome() + ",\n\n"
                 + "La tua prenotazione per il servizio '" + servizio.getNomeServizio() + "' è stata confermata.\n\n"
                 + "Dettagli:\n\n"
-                + "📅 Data: " + dataFormattata+ "\n"
+                + "📅 Data: " + dataFormattata + "\n"
                 + "🕒 Orario: " + dataOraPrenotazione.toLocalTime() + "\n"
                 + "⌛ Durata: " + durata + " minuti\n"
-                + "📍 Indirizzo: " + prenotazione.getIndirizzo().getCitta() +",  "+ prenotazione.getIndirizzo().getVia() + " " + prenotazione.getIndirizzo().getNumeroCivico() +  " - " + prenotazione.getIndirizzo().getNomeStudio() + "\n"
+                + "📍 Indirizzo: " + prenotazione.getIndirizzo().getCitta() + ",  " + prenotazione.getIndirizzo().getVia() + " " + prenotazione.getIndirizzo().getNumeroCivico() + " - " + prenotazione.getIndirizzo().getNomeStudio() + "\n"
                 + (!Objects.equals(prenotazione.getNote(), "") ? "📝 Note: " + prenotazione.getNote() + "\n\n" : "\n\n") // se non vengono aggiunte note non viene mostrato niente
                 + "Grazie!\n"
                 + "A presto, cordiali saluti,\n\nDott.Alessandro";
@@ -170,7 +164,6 @@ public class PrenotazioneService {
         Utente utenteLoggato = userDetails.getUser();
 
 
-
         // Trovo la prenotazione
         Prenotazione prenotazione = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Prenotazione non trovata ️ ️"));
@@ -187,7 +180,7 @@ public class PrenotazioneService {
             String oggetto = "Cancellazione Prenotazione - " + prenotazione.getServizio().getNomeServizio();
 
             String contenuto = "Ciao " + prenotazione.getUtente().getNome() + ",\n\n"
-                    + "La tua prenotazione per il servizio '" + prenotazione.getServizio().getNomeServizio() + " prevista per il " +dataFormattata  + " alle: " + prenotazione.getDataOra().toLocalTime() + " a " +prenotazione.getIndirizzo().getCitta() + ", " + prenotazione.getIndirizzo().getVia()+ " " +prenotazione.getIndirizzo().getNumeroCivico() + " - " + prenotazione.getIndirizzo().getNomeStudio() +" è stata cancellata con successo.\n\n"
+                    + "La tua prenotazione per il servizio '" + prenotazione.getServizio().getNomeServizio() + " prevista per il " + dataFormattata + " alle: " + prenotazione.getDataOra().toLocalTime() + " a " + prenotazione.getIndirizzo().getCitta() + ", " + prenotazione.getIndirizzo().getVia() + " " + prenotazione.getIndirizzo().getNumeroCivico() + " - " + prenotazione.getIndirizzo().getNomeStudio() + " è stata cancellata con successo.\n\n"
                     + "Se la cancellazione è avvenuta per errore o desideri prenotare un nuovo appuntamento,\n"
                     + "puoi farlo direttamente accedendo alla tua area personale o contattandomi.\n\n"
                     + "Grazie!\n"
@@ -251,7 +244,7 @@ public class PrenotazioneService {
                 }
 
                 //ORARIO APERTURA STUDIO ORE 9:00, non si possono prendere appunntamenti ceh iniziano prima
-                if(oraInizio.isBefore(LocalTime.of(9, 0)) ){
+                if (oraInizio.isBefore(LocalTime.of(9, 0))) {
                     throw new IllegalArgumentException(" Non è possibile prenotare appuntamenti prima delle 9:00");
                 }
 
@@ -288,7 +281,7 @@ public class PrenotazioneService {
             }
 
             //se viene forinto un nuovo indirizzo, aggiorna
-            if(prenotazioneDTO.getIndirizzoId() != null){
+            if (prenotazioneDTO.getIndirizzoId() != null) {
                 Indirizzo indirizzo = indirizzoRepository.findById(prenotazioneDTO.getIndirizzoId()).orElseThrow(() -> new EntityNotFoundException("Indirizzo non trovato"));
                 prenotazione.setIndirizzo(indirizzo);
             }
@@ -309,7 +302,7 @@ public class PrenotazioneService {
                     + "📅 Data: " + dataFormattata + "\n"
                     + "🕒 Orario: " + prenotazione.getDataOra().toLocalTime() + "\n"
                     + "⌛ Durata: " + prenotazione.getServizio().getDurata() + " minuti\n"
-                    + "📍 Indirizzo: " + prenotazione.getIndirizzo().getCitta() +",  "+ prenotazione.getIndirizzo().getVia() + " " + prenotazione.getIndirizzo().getNumeroCivico() +  " - " + prenotazione.getIndirizzo().getNomeStudio() + "\n"
+                    + "📍 Indirizzo: " + prenotazione.getIndirizzo().getCitta() + ",  " + prenotazione.getIndirizzo().getVia() + " " + prenotazione.getIndirizzo().getNumeroCivico() + " - " + prenotazione.getIndirizzo().getNomeStudio() + "\n"
                     + (prenotazione.getNote() != null ? "📝 Note: " + prenotazione.getNote() + "\n\n" : "")
                     + "Grazie!\n"
                     + "A presto, cordiali saluti,\n\nDott.Alessandro";
@@ -349,6 +342,9 @@ public class PrenotazioneService {
 
         LocalTime inizioOrario = LocalTime.of(9, 0);  // Apertura
         LocalTime fineOrario = LocalTime.of(20, 30);  // Chiusura
+
+
+        LocalTime fineOrarioSabato = LocalTime.of(13, 0);//chiusura sabato
         int durataServizio = servizio.getDurata();  // Durata del servizio scelto
 
         List<LocalDateTime> orariDisponibili = new ArrayList<>();
@@ -378,8 +374,11 @@ public class PrenotazioneService {
 
         // Tutti gli orari disponibili
         LocalTime orarioCorrente = inizioOrario;
-        while (orarioCorrente.plusMinutes(durataServizio).isBefore(fineOrario) ||
-                orarioCorrente.plusMinutes(durataServizio).equals(fineOrario)) {
+        // Se è sabato, usa il fine orario sabato, altrimenti il normale
+        LocalTime orarioFineGiornata = data.getDayOfWeek().equals(DayOfWeek.SATURDAY) ? fineOrarioSabato : fineOrario;
+
+        while (orarioCorrente.plusMinutes(durataServizio).isBefore(orarioFineGiornata) ||
+                orarioCorrente.plusMinutes(durataServizio).equals(orarioFineGiornata)) {
 
             boolean occupato = false;
 
