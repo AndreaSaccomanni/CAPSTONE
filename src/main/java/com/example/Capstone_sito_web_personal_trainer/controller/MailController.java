@@ -1,15 +1,16 @@
 package com.example.Capstone_sito_web_personal_trainer.controller;
 
 import com.example.Capstone_sito_web_personal_trainer.entities.MailModel;
+import com.example.Capstone_sito_web_personal_trainer.payload.FormInformazioniDTO;
 import com.example.Capstone_sito_web_personal_trainer.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/mail")
@@ -27,6 +28,16 @@ public class MailController {
 
         // Se la validazione va a buon fine, invia la mail
         String messaggio = mailService.inviaEmail(mailModel);
+        return ResponseEntity.ok(messaggio);
+    }
+
+    @PostMapping("/sendForm")
+    public ResponseEntity<String> inviaForm(@RequestBody FormInformazioniDTO form, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("Errore di validazione: " + bindingResult.getAllErrors().toString());
+        }
+
+        String messaggio = mailService.inviaForm(form);
         return ResponseEntity.ok(messaggio);
     }
 }

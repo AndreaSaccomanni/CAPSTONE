@@ -1,8 +1,10 @@
 package com.example.Capstone_sito_web_personal_trainer.entities;
 
 import com.example.Capstone_sito_web_personal_trainer.enumeration.TipoMassaggio;
-import jakarta.persistence.*;
-
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,12 +25,15 @@ public class Massaggio extends Servizio {
             case DECONTRATTURANTE_SPORTIVO:
                 this.setDurata(30);
                 break;
+            case APPLICAZIONE_TAPE:
+                this.setDurata(15);
+                break;
             default:
                 throw new IllegalArgumentException("Tipo di massaggio non valido: " + tipoMassaggio);
         }
 
 
-}
+    }
 
     @Override
     public String getNomeServizio() {

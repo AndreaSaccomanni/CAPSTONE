@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
     private RuoloRepository ruoloRepository;
     @Autowired
     private MassaggioRepository massaggioRepository;
@@ -29,17 +31,12 @@ public class DataInitializer implements CommandLineRunner {
     private ConsulenzaRepository consulenzaRepository;
     @Autowired
     private UtenteRepository utenteRepository;
-
     @Autowired
     private MassaggioService massaggioService;
-
     @Autowired
     private ConsulenzaService consulenzaService;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-// ------------- INSERIMENTO AUTOMATICO DI RUOLI, SERVIZI E ADMIN ----------------
+    // ------------- INSERIMENTO AUTOMATICO DI RUOLI, SERVIZI E ADMIN ----------------
     @Override
     public void run(String... args) throws Exception {
         if (ruoloRepository.count() == 0) {
@@ -66,10 +63,17 @@ public class DataInitializer implements CommandLineRunner {
             MassaggioDTO massaggio2DTO = new MassaggioDTO();
             massaggio2DTO.setTipoMassaggio(TipoMassaggio.DECONTRATTURANTE_SPORTIVO);
             massaggioService.creaMassaggio(massaggio2DTO);
+
+
+        }
+        if (!massaggioRepository.existsByTipoMassaggio(TipoMassaggio.APPLICAZIONE_TAPE)) {
+            MassaggioDTO applicazioneTape = new MassaggioDTO();
+            applicazioneTape.setTipoMassaggio(TipoMassaggio.APPLICAZIONE_TAPE);
+            massaggioService.creaMassaggio(applicazioneTape);
         }
 
 
-        if(consulenzaRepository.count() == 0) {
+        if (consulenzaRepository.count() == 0) {
             ConsulenzaDTO consulenza1DTO = new ConsulenzaDTO();
             consulenza1DTO.setTipoConsulenza(TipoConsulenza.VALUTAZIONE_INIZIALE);
             consulenzaService.creaConsulenza(consulenza1DTO);
@@ -78,7 +82,6 @@ public class DataInitializer implements CommandLineRunner {
             consulenza2DTO.setTipoConsulenza(TipoConsulenza.MIGLIORAMENTO_SCHEDA);
             consulenzaService.creaConsulenza(consulenza2DTO);
         }
-
 
 
     }

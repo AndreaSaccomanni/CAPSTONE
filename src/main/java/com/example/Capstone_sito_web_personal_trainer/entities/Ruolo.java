@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Objects;
 
 
 @Data
@@ -23,11 +22,9 @@ public class Ruolo {
     private UserRole name;
 
 
-
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, name);
+//    } //due oggetti Ruolo con lo stesso id e con lo stesso nome avranno lo stesso hashcode
 
 }

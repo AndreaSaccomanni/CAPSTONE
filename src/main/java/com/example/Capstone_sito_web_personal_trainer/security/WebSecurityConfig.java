@@ -70,6 +70,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/utenti/registrazione").permitAll()
                         .requestMatchers("/utenti/login").permitAll()
                         .requestMatchers("/mail/sendMail").permitAll()
+                        .requestMatchers("/mail/sendForm").permitAll()
                         .requestMatchers("/servizi/**").permitAll()
                         .requestMatchers("/indirizzi/**").permitAll()
 
@@ -78,16 +79,15 @@ public class WebSecurityConfig {
                         .requestMatchers("/prenotazioni/new").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/prenotazioni/update/**").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
                         .requestMatchers("/prenotazioni/delete/**").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
-                        .requestMatchers("/prenotazioni/utente/**").hasAnyAuthority( "USER","ADMIN", "PERSONAL_TRAINER")
-                        .requestMatchers("/prenotazioni/orariDisponibili").hasAnyAuthority( "USER","ADMIN", "PERSONAL_TRAINER")
+                        .requestMatchers("/prenotazioni/utente/**").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
+                        .requestMatchers("/prenotazioni/orariDisponibili").hasAnyAuthority("USER", "ADMIN", "PERSONAL_TRAINER")
 
-                        .requestMatchers("/prenotazioni/all").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
+                        .requestMatchers("/prenotazioni/all").hasAnyAuthority("ADMIN", "PERSONAL_TRAINER")
 
-                        .requestMatchers("/utenti/all").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
-                        .requestMatchers("/utenti/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
-                        .requestMatchers("/utenti/delete/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
-                        .requestMatchers("/utenti/update/**").hasAnyAuthority( "ADMIN", "PERSONAL_TRAINER")
-
+                        .requestMatchers("/utenti/all").hasAnyAuthority("ADMIN", "PERSONAL_TRAINER")
+                        .requestMatchers("/utenti/**").hasAnyAuthority("ADMIN", "PERSONAL_TRAINER")
+                        .requestMatchers("/utenti/delete/**").hasAnyAuthority("ADMIN", "PERSONAL_TRAINER")
+                        .requestMatchers("/utenti/update/**").hasAnyAuthority("ADMIN", "PERSONAL_TRAINER")
 
 
                         // Permessi per ADMIN ---> può fare tutto
@@ -95,8 +95,6 @@ public class WebSecurityConfig {
 
                         // Permessi per PERSONAL_TRAINER
                         .requestMatchers("/prenotazioni/**").hasAuthority("PERSONAL_TRAINER")
-
-
 
 
                         .anyRequest().authenticated());
